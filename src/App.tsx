@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import axios from 'axios';
 
-const base_url = "http://bau.amesame.rocks"
+const base_url = "https://bau.amesame.rocks"
 
 function App() {
   const [globalBauCount, setGlobalBauCount] = useState("-");
