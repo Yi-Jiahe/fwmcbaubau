@@ -1,24 +1,51 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import axios from 'axios';
+
+const base_url = "http://bau.amesame.rocks"
 
 function App() {
+  const [globalBauCount, setGlobalBauCount] = useState("-");
+  const [playFuwawaBau, setPlayFuwawaBau] = useState(false);
+  const [playMococoBau, setPlayMococoBau] = useState(false);
+
+  useEffect(() => {
+    axios.get(`${base_url}/bau`)
+      .then(resp => { setGlobalBauCount(resp.data['baus']); })
+      .catch(err => { console.log(err); })
+  }, [])
+
+  const PostBau = (source: string) => {
+    axios.post(`${base_url}/bau?source=${source}`)
+      .then(resp => { setGlobalBauCount(resp.data['baus']); })
+      .catch(err => { console.log(err); })
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <p>{globalBauCount ? globalBauCount : "-"}</p>
+        <p>Global Bau Counter</p>
+        <div
+          className='button-container'>
+          <div
+            id='fuwawa'
+            className={playFuwawaBau ? 'play-fuwawa-bau' : ''}
+            onClick={() => {
+              setPlayFuwawaBau(true)
+              PostBau("fuwawa");
+            }}
+            onAnimationEnd={() => { setPlayFuwawaBau(false) }}
+          />
+          <div
+            id='mococo'
+            className={playMococoBau ? 'play-mococo-bau' : ''}
+            onClick={() => {
+              setPlayMococoBau(true)
+              PostBau("mococo");
+            }}
+            onAnimationEnd={() => { setPlayMococoBau(false) }}
+          />
+        </div>
     </div>
   );
 }
