@@ -31,6 +31,10 @@ p {
   background-image: url('fuwawa_128.png');
   height: 128px;
   width: 128px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -ms-backface-visibility: hidden;
 }
 
 .play-fuwawa-bau {
@@ -51,6 +55,10 @@ p {
   background-image: url('mococo_128.png');
   height: 128px;
   width: 128px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -ms-backface-visibility: hidden;
 }
 
 .play-mococo-bau {
