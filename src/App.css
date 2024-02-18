@@ -4,6 +4,9 @@
   height: 100vh;
   justify-content: center;
   text-align: center;
+  background-image: url('background.png');
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .button-container {
