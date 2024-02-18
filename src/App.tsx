@@ -3,7 +3,7 @@ import './App.css';
 import axios from 'axios';
 
 const base_url = "https://bau.amesame.rocks"
-const audioBaseURL = "http://d3beqw4zdoa6er.cloudfront.net/";
+const audioBaseURL = "https://d3beqw4zdoa6er.cloudfront.net/";
 
 
 const GetAudio = (source: string) => {
