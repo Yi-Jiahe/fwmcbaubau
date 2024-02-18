@@ -9,6 +9,19 @@
   background-position: center;
 }
 
+p {
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+#global-bau-counter {
+  font-size: 5em;
+  margin-bottom: 0px;
+}
+
+#subscribe {
+  margin-top: 100px;
+}
+
 .button-container {
   display: flex;
   justify-content: center;

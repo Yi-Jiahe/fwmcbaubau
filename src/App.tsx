@@ -46,8 +46,8 @@ function App() {
 
   return (
     <div className="App">
-      <p>{globalBauCount ? globalBauCount : "-"}</p>
-      <p>Global Bau Counter</p>
+      <p id='global-bau-counter'>{globalBauCount ? globalBauCount : "-"}</p>
+      <p id='global-bau-counter-label'>GLOBAL BAU COUNTER</p>
       <div
         className='button-container'>
         <div
@@ -80,6 +80,8 @@ function App() {
           onAnimationEnd={() => { setPlayMococoBau(false) }}
         />
       </div>
+      
+      <p id='subscribe'>Subscribe to <a href='https://www.youtube.com/@FUWAMOCOch'>FUWAMOCO Ch. hololive-EN</a></p>
     </div>
   );
 }
