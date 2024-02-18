@@ -18,11 +18,13 @@
 }
 
 .play-fuwawa-bau {
-  animation: fuwawa-bau 0.15s;
+  animation: fuwawa-bau 1.2s;
 }
 
 @keyframes fuwawa-bau {
   0% { background-image: url('fuwawa_128.png') }
+  35% {background-image: url('fuwawa_bau_128.png'); }
+  40% { background-image: url('fuwawa_128.png') }
   100% {background-image: url('fuwawa_bau_128.png'); }
 }
 
@@ -33,10 +35,12 @@
 }
 
 .play-mococo-bau {
-  animation: mococo-bau 0.15s;
+  animation: mococo-bau 1.2s;
 }
 
 @keyframes mococo-bau {
   0% { background-image: url('mococo_128.png') }
+  35% {background-image: url('mococo_bau_128.png'); }
+  40% { background-image: url('mococo_128.png') }
   100% {background-image: url('mococo_bau_128.png'); }
 }
