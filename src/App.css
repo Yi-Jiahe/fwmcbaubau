@@ -39,8 +39,11 @@ p {
 
 @keyframes fuwawa-bau {
   0% { background-image: url('fuwawa_128.png') }
+  1% {background-image: url('fuwawa_bau_128.png'); }
   35% {background-image: url('fuwawa_bau_128.png'); }
+  36% { background-image: url('fuwawa_128.png') }
   40% { background-image: url('fuwawa_128.png') }
+  41% {background-image: url('fuwawa_bau_128.png'); }
   100% {background-image: url('fuwawa_bau_128.png'); }
 }
 
@@ -56,7 +59,10 @@ p {
 
 @keyframes mococo-bau {
   0% { background-image: url('mococo_128.png') }
+  1% {background-image: url('mococo_bau_128.png'); }
   35% {background-image: url('mococo_bau_128.png'); }
+  36% { background-image: url('mococo_128.png') }
   40% { background-image: url('mococo_128.png') }
+  41% {background-image: url('mococo_bau_128.png'); }
   100% {background-image: url('mococo_bau_128.png'); }
 }
