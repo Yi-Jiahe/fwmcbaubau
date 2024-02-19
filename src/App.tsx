@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import axios from 'axios';
+import fuwawa from './fuwawa_128.png';
+import fuwawa_bau from './fuwawa_bau_128.png';
+import mococo from './mococo_128.png';
+import mococo_bau from './mococo_bau_128.png'
 
 const base_url = "https://bau.amesame.rocks"
 const audioBaseURL = "https://d3beqw4zdoa6er.cloudfront.net/";
@@ -52,7 +56,6 @@ function App() {
         className='button-container'>
         <div
           id='fuwawa'
-          className={playFuwawaBau ? 'play-fuwawa-bau' : ''}
           onClick={() => {
             let a = GetAudio("fuwawa");
             a.play().then(
@@ -61,13 +64,18 @@ function App() {
                 PostBau("fuwawa");
               }
             );
-
           }}
-          onAnimationEnd={() => { setPlayFuwawaBau(false) }}
-        />
+        >
+          <img id='fuwawa-bau'
+            src={fuwawa_bau} alt='fuwawa-bau'
+            className={`animated-image ${playFuwawaBau ? 'play-bau-bau' : ''}`}
+            onAnimationEnd={() => { setPlayFuwawaBau(false) }} />
+          <img id='fuwawa-default'
+            src={fuwawa} alt='fuwawa'
+            className={`animated-image front ${playFuwawaBau ? 'play-bau-bau' : ''}`} />
+        </div>
         <div
           id='mococo'
-          className={playMococoBau ? 'play-mococo-bau' : ''}
           onClick={() => {
             let a = GetAudio("mococo");
             a.play()
@@ -75,12 +83,18 @@ function App() {
                 setPlayMococoBau(true);
                 PostBau("mococo");
               });
-
           }}
-          onAnimationEnd={() => { setPlayMococoBau(false) }}
-        />
+        >
+          <img id='mococo-bau'
+            src={mococo_bau} alt='fuwawa-bau'
+            className={`animated-image ${playMococoBau ? 'play-bau-bau' : ''}`}
+            onAnimationEnd={() => { setPlayMococoBau(false) }} />
+          <img id='mococo-default'
+            src={mococo} alt='fuwawa'
+            className={`animated-image front ${playMococoBau ? 'play-bau-bau' : ''}`} />
+        </div>
       </div>
-      
+
       <p id='subscribe'>Subscribe to <a href='https://www.youtube.com/@FUWAMOCOch'>FUWAMOCO Ch. hololive-EN</a></p>
     </div>
   );
