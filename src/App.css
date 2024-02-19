@@ -27,50 +27,49 @@ p {
   justify-content: center;
 }
 
-#fuwawa {
-  background-image: url('fuwawa_128.png');
+.animated-image {
+  position: absolute;
+  width: 100%;
+  left: 0%;
+  object-fit: cover;
+  opacity: 0;
+}
+
+.animated-image.front {
+  opacity: 1;
+}
+
+#fuwawa, #mococo {
+  position: relative;
   height: 128px;
   width: 128px;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  -moz-backface-visibility: hidden;
-  -ms-backface-visibility: hidden;
 }
 
-.play-fuwawa-bau {
-  animation: fuwawa-bau 1.2s;
+#fuwawa-default.play-bau-bau, #mococo-default.play-bau-bau {
+  animation: bau-bau-front 1.2s;
 }
 
-@keyframes fuwawa-bau {
-  0% { background-image: url('fuwawa_128.png') }
-  1% {background-image: url('fuwawa_bau_128.png'); }
-  35% {background-image: url('fuwawa_bau_128.png'); }
-  36% { background-image: url('fuwawa_128.png') }
-  40% { background-image: url('fuwawa_128.png') }
-  41% {background-image: url('fuwawa_bau_128.png'); }
-  100% {background-image: url('fuwawa_bau_128.png'); }
+#fuwawa-bau.play-bau-bau, #mococo-bau.play-bau-bau {
+  animation: bau-bau-back 1.2s;
 }
 
-#mococo {
-  background-image: url('mococo_128.png');
-  height: 128px;
-  width: 128px;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  -moz-backface-visibility: hidden;
-  -ms-backface-visibility: hidden;
+@keyframes bau-bau-front {
+  0% { opacity: 1; }
+  1%  { opacity: 0; }
+  35% { opacity: 0; }
+  36% { opacity: 1; }
+  40% { opacity: 1; }
+  41% { opacity: 0; }
+  100% { opacity: 0; }
 }
 
-.play-mococo-bau {
-  animation: mococo-bau 1.2s;
+@keyframes bau-bau-back {
+  0% { opacity: 0; }
+  1%  { opacity: 1; }
+  35% { opacity: 1; }
+  36% { opacity: 0; }
+  40% { opacity: 0; }
+  41% { opacity: 1; }
+  100% { opacity: 1; }
 }
 
-@keyframes mococo-bau {
-  0% { background-image: url('mococo_128.png') }
-  1% {background-image: url('mococo_bau_128.png'); }
-  35% {background-image: url('mococo_bau_128.png'); }
-  36% { background-image: url('mococo_128.png') }
-  40% { background-image: url('mococo_128.png') }
-  41% {background-image: url('mococo_bau_128.png'); }
-  100% {background-image: url('mococo_bau_128.png'); }
-}
