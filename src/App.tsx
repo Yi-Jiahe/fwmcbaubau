@@ -37,6 +37,10 @@ function App() {
   const [playMococoBau, setPlayMococoBau] = useState(false);
 
   useEffect(() => {
+    axios.get(`${base_url}/bau`)
+      .then(resp => { setGlobalBauCount(resp.data['baus']); })
+      .catch(err => { console.log(err); });
+
     const interval = setInterval(() => {
       axios.get(`${base_url}/bau`)
         .then(resp => { setGlobalBauCount(resp.data['baus']); })
