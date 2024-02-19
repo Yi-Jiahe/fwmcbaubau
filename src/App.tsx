@@ -66,12 +66,10 @@ function App() {
             );
           }}
         >
-          <img id='fuwawa-bau'
-            src={fuwawa_bau} alt='fuwawa-bau'
+          <img id='fuwawa-bau' src={fuwawa_bau} alt='fuwawa-bau'
             className={`animated-image ${playFuwawaBau ? 'play-bau-bau' : ''}`}
             onAnimationEnd={() => { setPlayFuwawaBau(false) }} />
-          <img id='fuwawa-default'
-            src={fuwawa} alt='fuwawa'
+          <img id='fuwawa-default' src={fuwawa} alt='fuwawa'
             className={`animated-image front ${playFuwawaBau ? 'play-bau-bau' : ''}`} />
         </div>
         <div
@@ -86,11 +84,9 @@ function App() {
           }}
         >
           <img id='mococo-bau'
-            src={mococo_bau} alt='fuwawa-bau'
-            className={`animated-image ${playMococoBau ? 'play-bau-bau' : ''}`}
+            src={mococo_bau} alt='fuwawa-bau' className={`animated-image ${playMococoBau ? 'play-bau-bau' : ''}`}
             onAnimationEnd={() => { setPlayMococoBau(false) }} />
-          <img id='mococo-default'
-            src={mococo} alt='fuwawa'
+          <img id='mococo-default' src={mococo} alt='fuwawa'
             className={`animated-image front ${playMococoBau ? 'play-bau-bau' : ''}`} />
         </div>
       </div>
