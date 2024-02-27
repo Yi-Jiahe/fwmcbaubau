@@ -23,8 +23,12 @@ a {
 
 #message {
   position: absolute;
-  top: 5px;
-  width: calc(100vw - 10px);
+  top: 50px;
+  width: fit-content;
+  margin: auto;
+  left: 0;
+  right: 0;
+  padding: 10px;
   text-align: center;
   background-color: white;
   border-top: 5px solid #91d5ff;

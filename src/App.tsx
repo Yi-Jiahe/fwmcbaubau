@@ -39,17 +39,27 @@ const PreloadAudio = () => {
   }
 }
 
+const quotes = [
+  "To Bau or not to Bau",
+  "To live is to Bau",
+  "Bau Bau Bau Bau Bau Bau!",
+  "I Bau, therefore I am",
+]
 
 function App() {
   const [globalBauCount, setGlobalBauCount] = useState("-");
   const [playFuwawaBau, setPlayFuwawaBau] = useState(false);
   const [playMococoBau, setPlayMococoBau] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
+  const [message, setMessage] = useState<undefined | string>();
+  const [showMessage, setShowMessage] = useState(true);
 
   useEffect(() => {
     axios.get(`${base_url}/bau`)
       .then(resp => { setGlobalBauCount(resp.data['baus']); })
       .catch(err => { console.log(err); });
+
+    setMessage(quotes[Math.floor(Math.random() * quotes.length)]);
 
     PreloadAudio();
 
@@ -71,10 +81,9 @@ function App() {
 
   return (
     <div className="App">
-      <div id='message'>
-        <p>Did the counter just drop?</p>
-        <p>No cause for alarm Ruffians, just cleaning up BAUs suspected to be from robots.</p>
-      </div>
+      {showMessage && <div id='message' onClick={() => setShowMessage(false) }>
+        <p>{message}</p>
+      </div>}
       <div id="content">
         <p id='global-bau-counter'>{globalBauCount ? globalBauCount : "-"}</p>
         <p id='global-bau-counter-label'>GLOBAL BAU COUNTER</p>
