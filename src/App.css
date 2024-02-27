@@ -17,6 +17,10 @@ p {
   font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
+a {
+  text-decoration: none;
+}
+
 #global-bau-counter {
   font-size: 5em;
   margin-bottom: 0px;
@@ -47,6 +51,7 @@ p {
   position: relative;
   height: 128px;
   width: 128px;
+  cursor: pointer;
 }
 
 #fuwawa-default.play-bau-bau, #mococo-default.play-bau-bau {
@@ -87,10 +92,10 @@ footer {
 
 .footer-button {
 	background: none;
-	color: #0000EE;
 	border: none;
   padding-bottom: 5px;
   padding-right: 10px;
+  cursor: pointer;
 }
 
 .modal {
