@@ -1,12 +1,16 @@
 .App {
-  display: flex;
-  flex-direction: column;
   height: 100vh;
-  justify-content: center;
-  text-align: center;
   background-image: url('background.png');
   background-repeat: no-repeat;
   background-position: center;
+}
+
+#content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
 }
 
 p {
@@ -73,3 +77,54 @@ p {
   100% { opacity: 1; }
 }
 
+footer {
+  position: absolute;
+  width: 100vw;
+  bottom: 0px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.footer-button {
+	background: none;
+	color: #0000EE;
+	border: none;
+  padding-bottom: 5px;
+  padding-right: 10px;
+}
+
+.modal {
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
