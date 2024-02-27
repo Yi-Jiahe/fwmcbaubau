@@ -60,6 +60,10 @@ function App() {
 
   return (
     <div className="App">
+      <div id='message'>
+        <p>Did the counter just drop?</p>
+        <p>No cause for alarm Ruffians, just cleaning up BAUs suspected to be from robots.</p>
+      </div>
       <div id="content">
         <p id='global-bau-counter'>{globalBauCount ? globalBauCount : "-"}</p>
         <p id='global-bau-counter-label'>GLOBAL BAU COUNTER</p>
