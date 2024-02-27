@@ -7,27 +7,36 @@ import mococo from './mococo_128.png';
 import mococo_bau from './mococo_bau_128.png'
 
 const base_url = "https://bau.amesame.rocks";
-const audioBaseURL = "https://d3beqw4zdoa6er.cloudfront.net/";
+const audioBaseURL = "https://d3beqw4zdoa6er.cloudfront.net";
 
+const nFuwawaAudioClips = 17;
+const nMococoAudioClips = 17;
 
 const GetAudio = (source: string) => {
-  const nFuwawaAudioClips = 17;
-  const nMococoAudioClips = 17;
-
   let audioSrc = audioBaseURL;
 
   switch (source) {
     case "fuwawa":
-      audioSrc += `Fuwawa_BauBau_${Math.floor(Math.random() * nFuwawaAudioClips) + 1}.wav`;
+      audioSrc += `/Fuwawa_BauBau_${Math.floor(Math.random() * nFuwawaAudioClips) + 1}.wav`;
       break;
     case "mococo":
-      audioSrc += `Mococo_BauBau_${Math.floor(Math.random() * nMococoAudioClips) + 1}.wav`;
+      audioSrc += `/Mococo_BauBau_${Math.floor(Math.random() * nMococoAudioClips) + 1}.wav`;
       break;
     default:
       throw new Error("Unknown source");
   }
 
   return new Audio(audioSrc);
+}
+
+
+const PreloadAudio = () => {
+  for (let i = 1; i <= nFuwawaAudioClips; i++) {
+    new Audio(`${audioBaseURL}/Fuwawa_BauBau_${i}.wav`);
+  }
+  for (let i = 1; i <= nFuwawaAudioClips; i++) {
+    new Audio(`${audioBaseURL}/Mococo_BauBau_${i}.wav`);
+  }
 }
 
 
@@ -41,6 +50,8 @@ function App() {
     axios.get(`${base_url}/bau`)
       .then(resp => { setGlobalBauCount(resp.data['baus']); })
       .catch(err => { console.log(err); });
+
+    PreloadAudio();
 
     const interval = setInterval(() => {
       axios.get(`${base_url}/bau`)
@@ -123,7 +134,7 @@ type AboutProps = {
 
 function About({ closeAbout }: AboutProps) {
   return (
-<div className='modal'>
+    <div className='modal'>
       <div className="modal-content">
         <span className="close" onClick={() => closeAbout()}>&times;</span>
         <p>Hello fellow Ruffian and welcome to fwmcbaubau.com!</p>
