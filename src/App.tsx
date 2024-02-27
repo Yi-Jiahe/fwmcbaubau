@@ -125,14 +125,14 @@ function App() {
               className={`animated-image front ${playMococoBau ? 'play-bau-bau' : ''}`} />
           </div>
         </div>
-
         <p id='subscribe'>Subscribe to <a href='https://www.youtube.com/@FUWAMOCOch'>FUWAMOCO Ch. hololive-EN</a></p>
       </div>
+
+      {showAbout && <About closeAbout={() => setShowAbout(false)} />}
+
       <footer>
         <button className='footer-button' onClick={() => { console.log("about clicked"); setShowAbout(true); }}>About</button>
       </footer>
-
-      {showAbout && <About closeAbout={() => setShowAbout(false)} />}
     </div>
   );
 }
