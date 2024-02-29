@@ -12,15 +12,18 @@ const audioBaseURL = "https://d3beqw4zdoa6er.cloudfront.net";
 const nFuwawaAudioClips = 17;
 const nMococoAudioClips = 17;
 
+const FuwawaAudioClips = [...Array(nFuwawaAudioClips)].map((_, i) => `Fuwawa_BauBau_${i+1}.mp3`);
+const MococoAudioClips = [...Array(nMococoAudioClips)].map((_, i) => `Mococo_BauBau_${i+1}.mp3`);
+
 const GetAudio = (source: string) => {
   let audioSrc = audioBaseURL;
 
   switch (source) {
     case "fuwawa":
-      audioSrc += `/Fuwawa_BauBau_${Math.floor(Math.random() * nFuwawaAudioClips) + 1}.wav`;
+      audioSrc += `/${FuwawaAudioClips[Math.floor(Math.random() * nFuwawaAudioClips)]}`
       break;
     case "mococo":
-      audioSrc += `/Mococo_BauBau_${Math.floor(Math.random() * nMococoAudioClips) + 1}.wav`;
+      audioSrc += `/${MococoAudioClips[Math.floor(Math.random() * nMococoAudioClips)]}`
       break;
     default:
       throw new Error("Unknown source");
@@ -31,12 +34,8 @@ const GetAudio = (source: string) => {
 
 
 const PreloadAudio = () => {
-  for (let i = 1; i <= nFuwawaAudioClips; i++) {
-    new Audio(`${audioBaseURL}/Fuwawa_BauBau_${i}.wav`);
-  }
-  for (let i = 1; i <= nFuwawaAudioClips; i++) {
-    new Audio(`${audioBaseURL}/Mococo_BauBau_${i}.wav`);
-  }
+  FuwawaAudioClips.forEach((e) => { new Audio(`${audioBaseURL}/${e}`) });
+  MococoAudioClips.forEach((e) => { new Audio(`${audioBaseURL}/${e}`) });
 }
 
 const quotes = [
