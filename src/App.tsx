@@ -45,6 +45,8 @@ const quotes = [
   "I Bau, therefore I am",
 ]
 
+const pinnedMessage = "FUWAMOCO IN JAPAN!";
+
 function App() {
   const [globalBauCount, setGlobalBauCount] = useState("-");
   const [playFuwawaBau, setPlayFuwawaBau] = useState(false);
@@ -58,7 +60,7 @@ function App() {
       .then(resp => { setGlobalBauCount(resp.data['baus']); })
       .catch(err => { console.log(err); });
 
-    setMessage(quotes[Math.floor(Math.random() * quotes.length)]);
+    setMessage(pinnedMessage !== null ? pinnedMessage : quotes[Math.floor(Math.random() * quotes.length)]);
 
     PreloadAudio();
 
