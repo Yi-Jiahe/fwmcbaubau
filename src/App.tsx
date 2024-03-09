@@ -97,7 +97,10 @@ function App() {
               let a = GetAudio("fuwawa");
               a.play().then(
                 () => {
-                  setPlayFuwawaBau(true);
+                  if (!playFuwawaBau) {
+                    setPlayFuwawaBau(true);
+                    setTimeout(() => { setPlayFuwawaBau(false) }, 1200);
+                  }
                   PostBau("fuwawa");
                 }
               );
@@ -105,7 +108,7 @@ function App() {
           >
             <img id='fuwawa-bau' src={fuwawa_bau} alt='fuwawa-bau'
               className={`animated-image ${playFuwawaBau ? 'play-bau-bau' : ''}`}
-              onAnimationEnd={() => { setPlayFuwawaBau(false) }} />
+              />
             <img id='fuwawa-default' src={fuwawa} alt='fuwawa'
               className={`animated-image front ${playFuwawaBau ? 'play-bau-bau' : ''}`} />
           </div>
@@ -115,14 +118,17 @@ function App() {
               let a = GetAudio("mococo");
               a.play()
                 .then(() => {
-                  setPlayMococoBau(true);
+                  if (!playMococoBau) {
+                    setPlayMococoBau(true);
+                    setTimeout(() => { setPlayMococoBau(false) }, 1200);
+                  }
                   PostBau("mococo");
                 });
             }}
           >
             <img id='mococo-bau'
               src={mococo_bau} alt='fuwawa-bau' className={`animated-image ${playMococoBau ? 'play-bau-bau' : ''}`}
-              onAnimationEnd={() => { setPlayMococoBau(false) }} />
+              />
             <img id='mococo-default' src={mococo} alt='fuwawa'
               className={`animated-image front ${playMococoBau ? 'play-bau-bau' : ''}`} />
           </div>
