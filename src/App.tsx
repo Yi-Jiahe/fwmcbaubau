@@ -45,7 +45,8 @@ const quotes = [
   "I Bau, therefore I am",
 ]
 
-const pinnedMessage = "FUWAMOCO IN JAPAN!";
+const pinnedMessage = `FUWAMOCO IN JAPAN!
+THEY'RE BACK!`;
 
 function App() {
   const [globalBauCount, setGlobalBauCount] = useState("-");
