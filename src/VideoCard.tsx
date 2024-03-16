@@ -30,8 +30,15 @@ function VideoCard(props: VideoCardProps) {
       </div>
     </div>
     </a>
-
   );
+}
+
+function EmptyVideoCard() {
+  return (
+    <div className='video-card' style={{justifyContent: 'center', alignItems: 'center'}}>
+      No stream found
+  </div>
+  )
 }
 
 function durationString(durationMillis: number): string {
@@ -51,4 +58,5 @@ function durationString(durationMillis: number): string {
   return `${secondsToStart} second${secondsToStart === 1 ? '' : 's'}`;
 }
 
-export default VideoCard;
+export default VideoCard
+export { EmptyVideoCard };

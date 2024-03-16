@@ -4,6 +4,9 @@
 }
 
 .video-card {
+  max-width: 350px;
+  min-width: 300px;
+  min-height: 50px;
   display: flex;
   margin: 5px;
   padding: 5px;

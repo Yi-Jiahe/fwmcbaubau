@@ -1,21 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import VideoCard from './VideoCard';
 import About from './About';
 import axios from 'axios';
 import fuwawa from './fuwawa_128.png';
 import fuwawa_bau from './fuwawa_bau_128.png';
 import mococo from './mococo_128.png';
 import mococo_bau from './mococo_bau_128.png'
-
-type Stream = {
-  Id: string
-  ChannelId: string
-  Title: string
-  Thumbnail: string
-  ScheduledStartTime: string
-  ActualStartTime?: string
-}
+import { Stream } from './types';
+import StreamStatus from './StreamStatus';
 
 const base_url = "https://bau.amesame.rocks";
 const audioBaseURL = "https://d3beqw4zdoa6er.cloudfront.net";
@@ -70,8 +62,6 @@ function App() {
   const [showMessage, setShowMessage] = useState(true);
   const [stream, setStream] = useState<null | Stream>(null);
 
-  console.log("stream", stream);
-
   const UpdateBauCount = () => {
     axios.get(`${base_url}/bau`)
       .then(resp => { setGlobalBauCount(resp.data['baus']); })
@@ -80,11 +70,10 @@ function App() {
 
   const UpdateStream = () => {
     axios.get(`${youtubeChannelTrackerUrl}/stream`)
-    .then(resp => { 
-      console.log(resp);
-      setStream(resp.data);
-    })
-    .catch(err => { console.log(err); });
+      .then(resp => {
+        setStream(resp.data);
+      })
+      .catch(err => { console.log(err); });
   };
 
   useEffect(() => {
@@ -164,13 +153,9 @@ function App() {
           </div>
         </div>
 
-        {stream === null ? <div>No streams</div> : 
-        <div>
-          <p>BAU BAU NAU!! 🐾🩵🩷</p>
-          <VideoCard link={`https://www.youtube.com/watch?v=${stream.Id}`} thumbnail={stream.Thumbnail} title={stream.Title} startTime={stream.ActualStartTime === undefined ? stream.ScheduledStartTime : stream.ActualStartTime}></VideoCard>
+        <div id='stream-status'>
+          <StreamStatus stream={stream} />
         </div>
-        }
-
 
         <p id='subscribe'>Subscribe to <a href='https://www.youtube.com/@FUWAMOCOch'>FUWAMOCO Ch. hololive-EN</a></p>
       </div>

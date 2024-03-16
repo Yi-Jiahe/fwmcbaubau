@@ -66,8 +66,12 @@ a {
   margin-bottom: 0px;
 }
 
+#stream-status {
+  margin-top: 20px;
+}
+
 #subscribe {
-  margin-top: 50px;
+  margin-top: 30px;
 }
 
 .button-container {
