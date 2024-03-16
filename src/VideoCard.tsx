@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import './VideoCard.css';
 
 type VideoCardProps = {
@@ -12,11 +13,24 @@ const millisInAnHour = 3600000;
 const millisInAMinute = 60000;
 
 function VideoCard(props: VideoCardProps) {
-  let timeDifference = Date.now() - Date.parse(props.startTime);
-  const started = timeDifference > 0 ? true : false;
-  if (!started) {
-    timeDifference *= -1;
-  }
+  const [timeDifference, setTimeDifference] = useState<undefined | number>();
+  const [started, setStarted] = useState<undefined | boolean>();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      let dt = Date.now() - Date.parse(props.startTime);
+      const s = dt > 0 ? true : false;
+      if (!s) {
+        dt *= -1;
+      }
+      setStarted(s)
+      setTimeDifference(dt)
+    }, 1000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [])
+
 
   return (
     <a className='video-card-link' href={props.link} target='_blank' rel='noreferrer'>
@@ -26,7 +40,7 @@ function VideoCard(props: VideoCardProps) {
       </div>
       <div className='card-details'>
         <p className='title'>{props.title}</p>
-        <p className='time'>{started ? 'Started' : 'Starting in'} {durationString(timeDifference)} {started ? 'ago' : ''}</p>
+        <p className='time'>{started === undefined || timeDifference === undefined ? '' : `${started ? 'Started' : 'Starting in'} ${durationString(timeDifference)} ${started ? 'ago' : ''}`}</p>
       </div>
     </div>
     </a>
