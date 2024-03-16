@@ -59,7 +59,7 @@ function App() {
   const [playMococoBau, setPlayMococoBau] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
   const [message, setMessage] = useState<undefined | string>();
-  const [showMessage, setShowMessage] = useState(true);
+  const [showMessage, setShowMessage] = useState(false);
   const [stream, setStream] = useState<null | Stream>(null);
 
   const UpdateBauCount = () => {
