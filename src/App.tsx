@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
+import VideoCard from './VideoCard';
+import About from './About';
 import axios from 'axios';
 import fuwawa from './fuwawa_128.png';
 import fuwawa_bau from './fuwawa_bau_128.png';
@@ -12,8 +14,8 @@ const audioBaseURL = "https://d3beqw4zdoa6er.cloudfront.net";
 const nFuwawaAudioClips = 17;
 const nMococoAudioClips = 17;
 
-const FuwawaAudioClips = [...Array(nFuwawaAudioClips)].map((_, i) => `Fuwawa_BauBau_${i+1}.mp3`);
-const MococoAudioClips = [...Array(nMococoAudioClips)].map((_, i) => `Mococo_BauBau_${i+1}.mp3`);
+const FuwawaAudioClips = [...Array(nFuwawaAudioClips)].map((_, i) => `Fuwawa_BauBau_${i + 1}.mp3`);
+const MococoAudioClips = [...Array(nMococoAudioClips)].map((_, i) => `Mococo_BauBau_${i + 1}.mp3`);
 
 const GetAudio = (source: string) => {
   let audioSrc = audioBaseURL;
@@ -80,7 +82,7 @@ function App() {
 
   return (
     <div className="App">
-      {showMessage && <div id='message' onClick={() => setShowMessage(false) }>
+      {showMessage && <div id='message' onClick={() => setShowMessage(false)}>
         <p>{message}</p>
       </div>}
       <div id="content">
@@ -124,8 +126,17 @@ function App() {
               className={`animated-image front ${playMococoBau ? 'play-bau-bau' : ''}`} />
           </div>
         </div>
+
+        <div>
+          <p>BAU BAU NAU!! 🐾🩵🩷</p>
+          <VideoCard link='https://www.youtube.com/watch?v=bUOu7BiM9eQ' thumbnail='https://i.ytimg.com/vi/bUOu7BiM9eQ/mqdefault_live.jpg' title='【WHITE ALBUM】spending white day together ❄️🐾' startTime='2024-03-15T01:00:00Z'></VideoCard>
+        </div>
+
+
         <p id='subscribe'>Subscribe to <a href='https://www.youtube.com/@FUWAMOCOch'>FUWAMOCO Ch. hololive-EN</a></p>
       </div>
+
+
 
       {showAbout && <About closeAbout={() => setShowAbout(false)} />}
 
@@ -134,30 +145,6 @@ function App() {
       </footer>
     </div>
   );
-}
-
-type AboutProps = {
-  closeAbout: () => void
-}
-
-function About({ closeAbout }: AboutProps) {
-  return (
-    <div className='modal'>
-      <div className="modal-content">
-        <span className="close" onClick={() => closeAbout()}>&times;</span>
-        <p>Hello fellow Ruffian and welcome to fwmcbaubau.com!</p>
-
-        <p>To begin with, I would like to thank you for stopping by. It means a lot to me to be able contribute to the community.</p>
-
-        <p>I would also like to credit <a href='https://faunaraara.com/' target="_blank" rel="noreferrer">faunaraara.com</a> for giving me the inspiration to create this site.</p>
-
-        <p>If you have any suggestions or would like to report an issue, feel free to contact me on <a href='https://twitter.com/Activepaste1' target="_blank" rel="noreferrer">Twitter</a> or <a href='https://discordapp.com/users/196269893698453504' target="_blank" rel="noreferrer">Discord</a>.</p>
-
-        <p>fwmcbaubau.com a site built by a Ruffian for Ruffians. The use of robots for the express purpose of inflating the count is not encouraged. Measures have been taken to reduce the impact of bots, but the priority is not to impact actual Ruffians' experiences.</p>
-
-        <p>Have fun! BAU BAU 🐾</p>
-      </div>
-    </div>);
 }
 
 export default App;
