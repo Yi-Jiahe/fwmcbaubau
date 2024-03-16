@@ -8,8 +8,18 @@ import fuwawa_bau from './fuwawa_bau_128.png';
 import mococo from './mococo_128.png';
 import mococo_bau from './mococo_bau_128.png'
 
+type Stream = {
+  Id: string
+  ChannelId: string
+  Title: string
+  Thumbnail: string
+  ScheduledStartTime: string
+  ActualStartTime?: string
+}
+
 const base_url = "https://bau.amesame.rocks";
 const audioBaseURL = "https://d3beqw4zdoa6er.cloudfront.net";
+const youtubeChannelTrackerUrl = "https://youtube-channel-tracker.amesame.rocks";
 
 const nFuwawaAudioClips = 17;
 const nMococoAudioClips = 17;
@@ -50,6 +60,7 @@ const quotes = [
 const pinnedMessage = `FUWAMOCO IN JAPAN!
 THEY'RE BACK!`;
 
+
 function App() {
   const [globalBauCount, setGlobalBauCount] = useState("-");
   const [playFuwawaBau, setPlayFuwawaBau] = useState(false);
@@ -57,24 +68,41 @@ function App() {
   const [showAbout, setShowAbout] = useState(false);
   const [message, setMessage] = useState<undefined | string>();
   const [showMessage, setShowMessage] = useState(true);
+  const [stream, setStream] = useState<null | Stream>(null);
 
-  useEffect(() => {
+  console.log("stream", stream);
+
+  const UpdateBauCount = () => {
     axios.get(`${base_url}/bau`)
       .then(resp => { setGlobalBauCount(resp.data['baus']); })
       .catch(err => { console.log(err); });
+  };
+
+  const UpdateStream = () => {
+    axios.get(`${youtubeChannelTrackerUrl}/stream`)
+    .then(resp => { 
+      console.log(resp);
+      setStream(resp.data);
+    })
+    .catch(err => { console.log(err); });
+  };
+
+  useEffect(() => {
+    UpdateBauCount();
+    UpdateStream();
 
     setMessage(pinnedMessage !== null ? pinnedMessage : quotes[Math.floor(Math.random() * quotes.length)]);
 
     PreloadAudio();
 
-    const interval = setInterval(() => {
-      axios.get(`${base_url}/bau`)
-        .then(resp => { setGlobalBauCount(resp.data['baus']); })
-        .catch(err => { console.log(err); });
-    }, 5000);
+    const interval = setInterval(() => UpdateBauCount(), 5000);
+    const streamPollingInterval = setInterval(() => UpdateStream(), 60000);
 
     //Clearing the interval
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      clearInterval(streamPollingInterval);
+    };
   }, [])
 
   const PostBau = (source: string) => {
@@ -110,7 +138,7 @@ function App() {
           >
             <img id='fuwawa-bau' src={fuwawa_bau} alt='fuwawa-bau'
               className={`animated-image ${playFuwawaBau ? 'play-bau-bau' : ''}`}
-              />
+            />
             <img id='fuwawa-default' src={fuwawa} alt='fuwawa'
               className={`animated-image front ${playFuwawaBau ? 'play-bau-bau' : ''}`} />
           </div>
@@ -130,16 +158,18 @@ function App() {
           >
             <img id='mococo-bau'
               src={mococo_bau} alt='fuwawa-bau' className={`animated-image ${playMococoBau ? 'play-bau-bau' : ''}`}
-              />
+            />
             <img id='mococo-default' src={mococo} alt='fuwawa'
               className={`animated-image front ${playMococoBau ? 'play-bau-bau' : ''}`} />
           </div>
         </div>
 
+        {stream === null ? <div>No streams</div> : 
         <div>
           <p>BAU BAU NAU!! 🐾🩵🩷</p>
-          <VideoCard link='https://www.youtube.com/watch?v=bUOu7BiM9eQ' thumbnail='https://i.ytimg.com/vi/bUOu7BiM9eQ/mqdefault_live.jpg' title='【WHITE ALBUM】spending white day together ❄️🐾' startTime='2024-03-15T01:00:00Z'></VideoCard>
+          <VideoCard link={`https://www.youtube.com/watch?v=${stream.Id}`} thumbnail={stream.Thumbnail} title={stream.Title} startTime={stream.ActualStartTime === undefined ? stream.ScheduledStartTime : stream.ActualStartTime}></VideoCard>
         </div>
+        }
 
 
         <p id='subscribe'>Subscribe to <a href='https://www.youtube.com/@FUWAMOCOch'>FUWAMOCO Ch. hololive-EN</a></p>
