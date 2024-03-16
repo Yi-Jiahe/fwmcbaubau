@@ -29,7 +29,7 @@ function VideoCard(props: VideoCardProps) {
     return () => {
       clearInterval(interval);
     };
-  }, [])
+  }, [props.startTime])
 
 
   return (
