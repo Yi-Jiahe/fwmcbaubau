@@ -36,7 +36,8 @@ function VideoCard(props: VideoCardProps) {
     <a className='video-card-link' href={props.link} target='_blank' rel='noreferrer'>
           <div className='video-card'>
       <div className='thumbnail-container'>
-        <img className="thumbnail" src={props.thumbnail} alt='thumbnail' />
+        <img className={`thumbnail ${started ? 'live' : ''}`} src={props.thumbnail} alt='thumbnail' />
+        {started && <div className='live-tag'>LIVE</div>}
       </div>
       <div className='card-details'>
         <p className='title'>{props.title}</p>
