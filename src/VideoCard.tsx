@@ -40,7 +40,7 @@ function VideoCard(props: VideoCardProps) {
         {started && <div className='live-tag'>LIVE</div>}
       </div>
       <div className='card-details'>
-        <p className='title'>{props.title}</p>
+        <p className='title'><b>{props.title}</b></p>
         <p className='time'>{started === undefined || timeDifference === undefined ? '' : `${started ? 'Started' : 'Starting in'} ${durationString(timeDifference)} ${started ? 'ago' : ''}`}</p>
       </div>
     </div>
