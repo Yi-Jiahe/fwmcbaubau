@@ -1,13 +1,35 @@
 .App {
   height: 100vh;
-  background-image: url('background.png');
-  background-repeat: no-repeat;
-  background-position: center;
-  overflow: auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.App::before {
+  /* Pseudo-element to allow rotating the background separately */
+  /* Explanation: https://www.sitepoint.com/css3-transform-background-image/ */
+  content: '';
+  position: absolute;
+  /* Background is scaled up to ensure it covers the screen even when rotated */
+  width: 200%;
+  height: 200%;
+  /* Offset to ensure the colour transition happens in the center */
+  top: -50%;
+  left: -50%;
+  /* Ensure that background appears behind content */
+  z-index: -1;
+  /* Checkerboard background placed on top of a left to right gradient*/
+  /* Checkboard pattern is a mix of transparent and white */
+  /* Gradient is offset to go from left to right, accounting for the rotation */
+  /* Colour stops are added to make sure that a clean colour appears on screen even with the scaling */
+  background-image: repeating-conic-gradient(white 0% 25%, transparent 0% 50%), linear-gradient(60deg, #8fdfff 30%, #fab6d8 70%);
+  /* The checkerboard is repeated with a tile-size of 90-by-90px while the gradient is not repeated */
+  background-repeat: repeat, no-repeat;
+  background-size: 90px 90px, auto;
+  transform: rotate(30deg);
 }
 
 p {
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 a {
@@ -37,7 +59,7 @@ a {
   border-right: 5px solid #f78dbd;
   border-bottom: 5px solid #f78dbd;
   white-space: pre-wrap;
- }
+}
 
 #global-bau-counter {
   font-size: 5em;
@@ -51,7 +73,7 @@ a {
 .button-container {
   display: flex;
   justify-content: center;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 .animated-image {
@@ -66,39 +88,82 @@ a {
   opacity: 1;
 }
 
-#fuwawa, #mococo {
+#fuwawa,
+#mococo {
   position: relative;
   height: 128px;
   width: 128px;
   cursor: pointer;
 }
 
-#fuwawa-default.play-bau-bau, #mococo-default.play-bau-bau {
+#fuwawa-default.play-bau-bau,
+#mococo-default.play-bau-bau {
   animation: bau-bau-front 1.2s;
 }
 
-#fuwawa-bau.play-bau-bau, #mococo-bau.play-bau-bau {
+#fuwawa-bau.play-bau-bau,
+#mococo-bau.play-bau-bau {
   animation: bau-bau-back 1.2s;
 }
 
 @keyframes bau-bau-front {
-  0% { opacity: 1; }
-  1%  { opacity: 0; }
-  35% { opacity: 0; }
-  36% { opacity: 1; }
-  40% { opacity: 1; }
-  41% { opacity: 0; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 1;
+  }
+
+  1% {
+    opacity: 0;
+  }
+
+  35% {
+    opacity: 0;
+  }
+
+  36% {
+    opacity: 1;
+  }
+
+  40% {
+    opacity: 1;
+  }
+
+  41% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes bau-bau-back {
-  0% { opacity: 0; }
-  1%  { opacity: 1; }
-  35% { opacity: 1; }
-  36% { opacity: 0; }
-  40% { opacity: 0; }
-  41% { opacity: 1; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+
+  1% {
+    opacity: 1;
+  }
+
+  35% {
+    opacity: 1;
+  }
+
+  36% {
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 0;
+  }
+
+  41% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 footer {
@@ -110,8 +175,8 @@ footer {
 }
 
 .footer-button {
-	background: none;
-	border: none;
+  background: none;
+  border: none;
   padding-bottom: 5px;
   padding-right: 10px;
   cursor: pointer;
