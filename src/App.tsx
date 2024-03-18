@@ -69,7 +69,7 @@ function App() {
   };
 
   const UpdateStream = () => {
-    axios.get(`${youtubeChannelTrackerUrl}/stream`)
+    axios.get(`${youtubeChannelTrackerUrl}/api/stream`)
       .then(resp => {
         if (resp.data === '') {
           setStream(null);
