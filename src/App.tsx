@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import axios from 'axios';
 import fuwawa from './fuwawa_128.png';
@@ -49,13 +49,45 @@ const pinnedMessage = `FUWAMOCO IN JAPAN!
 THEY'RE BACK!`;
 
 function App() {
-  const [globalBauCount, setGlobalBauCount] = useState("-");
+  const [globalBauCount, setGlobalBauCount] = useState<undefined | number>();
   const [bauCount, setBauCount] = useState(0);
+  const [prevGlobalBauCount, setPreviousGlobalBauCount] = useState<undefined | number>();
+  const [prevBauCount, setPrevBauCount] = useState(0);
   const [playFuwawaBau, setPlayFuwawaBau] = useState(false);
   const [playMococoBau, setPlayMococoBau] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
   const [message, setMessage] = useState<undefined | string>();
   const [showMessage, setShowMessage] = useState(false);
+  const bauPollingIntervalMillis = 5000;
+
+  const bauPoll = useCallback(() => {
+    axios.get(`${base_url}/bau`)
+      .then(resp => { 
+        const currentGlobalBauCount = resp.data['baus'];
+
+        if (globalBauCount && prevGlobalBauCount && prevBauCount) {
+          // Only baus not from the user are to be played
+          const dGlobalBaus = globalBauCount - prevGlobalBauCount;
+          const dBaus = bauCount - prevBauCount;
+          const dForeignBaus = dGlobalBaus - dBaus;
+
+          for (let i = 0; i < dForeignBaus; i++) {
+            switch (Math.floor(Math.random() * 2)) {
+              case 0:
+                setTimeout(() => GetAudio("mococo").play(), Math.floor(Math.random() * bauPollingIntervalMillis));
+                break;
+              case 1: 
+                setTimeout(() => GetAudio("fuwawa").play(), Math.floor(Math.random() * bauPollingIntervalMillis));
+            }
+          }
+        }
+
+        setPrevBauCount(bauCount);
+        setPreviousGlobalBauCount(globalBauCount);
+        setGlobalBauCount(currentGlobalBauCount); 
+      })
+      .catch(err => { console.log(err); });
+  }, [bauCount, globalBauCount, prevBauCount, prevGlobalBauCount]);
 
   useEffect(() => {
     axios.get(`${base_url}/bau`)
@@ -66,15 +98,11 @@ function App() {
 
     PreloadAudio();
 
-    const interval = setInterval(() => {
-      axios.get(`${base_url}/bau`)
-        .then(resp => { setGlobalBauCount(resp.data['baus']); })
-        .catch(err => { console.log(err); });
-    }, 5000);
+    const interval = setInterval(bauPoll, bauPollingIntervalMillis);
 
     //Clearing the interval
     return () => clearInterval(interval);
-  }, [])
+  }, [bauPoll])
 
   const PostBau = (source: string) => {
     axios.post(`${base_url}/bau?source=${source}`)
