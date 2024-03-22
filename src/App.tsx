@@ -46,6 +46,7 @@ function App() {
   const [showAbout, setShowAbout] = useState(false);
   const [message, setMessage] = useState<undefined | string>();
   const [showMessage, setShowMessage] = useState(false);
+  const [playForeignBaus, setPlayForeignBaus] = useState(false);
   const bauPollingIntervalMillis = 2000;
 
   const bauPoll = useCallback(() => {
@@ -59,30 +60,33 @@ function App() {
           const dBaus = bauCount - prevBauCount;
           const dForeignBaus = dGlobalBaus - dBaus;
 
-          for (let i = 0; i < dForeignBaus; i++) {
-            let audio: null | Node;
+          if (playForeignBaus) {
+            for (let i = 0; i < dForeignBaus; i++) {
+              let audio: null | Node;
 
-            // Clone node so that volume changes doesn't affect the original
-            switch (Math.floor(Math.random() * 2)) {
-              case 0:
-                audio = GetAudio("mococo").cloneNode(true);
-                break;
-              case 1:
-                audio = GetAudio("fuwawa").cloneNode(true);
-                break;
-              default:
-                audio = null;
+              // Clone node so that volume changes doesn't affect the original
+              switch (Math.floor(Math.random() * 2)) {
+                case 0:
+                  audio = GetAudio("mococo").cloneNode(true);
+                  break;
+                case 1:
+                  audio = GetAudio("fuwawa").cloneNode(true);
+                  break;
+                default:
+                  audio = null;
+              }
+
+              if (audio === null) { continue; }
+
+              // Adjust the volume between min and max
+              // ts-ignore because cloned node type is missing audio methods and properties
+              // @ts-ignore
+              audio.volume = 0.3 + 0.4 * Math.random();
+              // @ts-ignore
+              setTimeout(() => audio.play(), Math.floor(Math.random() * bauPollingIntervalMillis));
             }
-
-            if (audio === null) { continue; }
-
-            // Adjust the volume between min and max
-            // ts-ignore because cloned node type is missing audio methods and properties
-            // @ts-ignore
-            audio.volume = 0.3 + 0.4 * Math.random();
-            // @ts-ignore
-            setTimeout(() => audio.play(), Math.floor(Math.random() * bauPollingIntervalMillis));
           }
+
         }
 
         setPrevBauCount(bauCount);
@@ -120,6 +124,10 @@ function App() {
       {showMessage && <div id='message' onClick={() => setShowMessage(false)}>
         <p>{message}</p>
       </div>}
+
+      <input id='play-foreign-baus-checkbox' type='checkbox' checked={playForeignBaus} onChange={() => setPlayForeignBaus(!playForeignBaus)} />
+      <label htmlFor='play-foreign-baus-checkbox'>Play Foreign Baus</label>
+
       <div id="content">
         <p id='global-bau-counter'>{globalBauCount ? globalBauCount : "-"}</p>
         <p id='global-bau-counter-label'>GLOBAL BAU COUNTER</p>
