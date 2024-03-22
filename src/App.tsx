@@ -44,9 +44,11 @@ function App() {
   const [playFuwawaBau, setPlayFuwawaBau] = useState(false);
   const [playMococoBau, setPlayMococoBau] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
-  const [message, setMessage] = useState<undefined | string>();
+  const [message, setMessage] = useState<undefined | string>(pinnedMessage !== null ? pinnedMessage : quotes[Math.floor(Math.random() * quotes.length)]);
   const [showMessage, setShowMessage] = useState(false);
   const [playForeignBaus, setPlayForeignBaus] = useState(false);
+  // User must have interacted with the site to play audio at least once for audio to be played in the background
+  const [userInteracted, setUserInteracted] = useState(false)
   const bauPollingIntervalMillis = 2000;
   const maxForeignBausPerSecond = 2;
 
@@ -102,8 +104,6 @@ function App() {
       .then(resp => { setGlobalBauCount(resp.data['baus']); })
       .catch(err => { console.log(err); });
 
-    setMessage(pinnedMessage !== null ? pinnedMessage : quotes[Math.floor(Math.random() * quotes.length)]);
-
     const interval = setInterval(bauPoll, bauPollingIntervalMillis);
 
     //Clearing the interval
@@ -126,7 +126,15 @@ function App() {
         <p>{message}</p>
       </div>}
 
-      <input id='play-foreign-baus-checkbox' type='checkbox' checked={playForeignBaus} onChange={() => setPlayForeignBaus(!playForeignBaus)} />
+      <input id='play-foreign-baus-checkbox' type='checkbox' checked={playForeignBaus} onChange={() => {
+        // In order to allow the site to play audio, the user must have interacted with the site to play audio first
+        if (!playForeignBaus && !userInteracted) {
+          setMessage("BAU BAU to confirm opting in to foreign baus!");
+          setShowMessage(true);
+          setUserInteracted(true);
+        }
+        setPlayForeignBaus(!playForeignBaus)
+      }} />
       <label htmlFor='play-foreign-baus-checkbox'>Play Foreign Baus</label>
 
       <div id="content">
@@ -141,6 +149,7 @@ function App() {
               a.play().then(
                 () => {
                   if (!playFuwawaBau) {
+                    setUserInteracted(true);
                     setPlayFuwawaBau(true);
                     setTimeout(() => { setPlayFuwawaBau(false) }, 1200);
                   }
@@ -161,6 +170,7 @@ function App() {
               let a = GetAudio("mococo");
               a.play()
                 .then(() => {
+                  setUserInteracted(true);
                   if (!playMococoBau) {
                     setPlayMococoBau(true);
                     setTimeout(() => { setPlayMococoBau(false) }, 1200);
