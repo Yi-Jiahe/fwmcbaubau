@@ -64,7 +64,7 @@ function App() {
           const dForeignBaus = dGlobalBaus - dBaus;
 
           if (playForeignBaus) {
-            for (let i = 0; i < dForeignBaus && i < maxForeignBausPerSecond * (bauPollingIntervalMillis / 1000); i++) {
+            for (let i = 0; i <= dForeignBaus && i <= maxForeignBausPerSecond * (bauPollingIntervalMillis / 1000); i++) {
               let audio: null | Node;
 
               // Clone node so that volume changes doesn't affect the original
@@ -131,7 +131,6 @@ function App() {
         if (!playForeignBaus && !userInteracted) {
           setMessage("BAU BAU to confirm opting in to foreign baus!");
           setShowMessage(true);
-          setUserInteracted(true);
         }
         setPlayForeignBaus(!playForeignBaus)
       }} />
