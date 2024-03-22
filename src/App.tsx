@@ -12,8 +12,8 @@ const audioBaseURL = "https://d3beqw4zdoa6er.cloudfront.net";
 const nFuwawaAudioClips = 17;
 const nMococoAudioClips = 17;
 
-const FuwawaAudioClips = [...Array(nFuwawaAudioClips)].map((_, i) => new Audio(`${audioBaseURL}/Fuwawa_BauBau_${i+1}.mp3`));
-const MococoAudioClips = [...Array(nMococoAudioClips)].map((_, i) => new Audio(`${audioBaseURL}/Mococo_BauBau_${i+1}.mp3`));
+const FuwawaAudioClips = [...Array(nFuwawaAudioClips)].map((_, i) => new Audio(`${audioBaseURL}/Fuwawa_BauBau_${i + 1}.mp3`));
+const MococoAudioClips = [...Array(nMococoAudioClips)].map((_, i) => new Audio(`${audioBaseURL}/Mococo_BauBau_${i + 1}.mp3`));
 
 const GetAudio = (source: string) => {
   switch (source) {
@@ -50,7 +50,7 @@ function App() {
 
   const bauPoll = useCallback(() => {
     axios.get(`${base_url}/bau`)
-      .then(resp => { 
+      .then(resp => {
         const currentGlobalBauCount = resp.data['baus'];
 
         if (globalBauCount && prevGlobalBauCount && prevBauCount) {
@@ -60,19 +60,34 @@ function App() {
           const dForeignBaus = dGlobalBaus - dBaus;
 
           for (let i = 0; i < dForeignBaus; i++) {
+            let audio: null | Node;
+
+            // Clone node so that volume changes doesn't affect the original
             switch (Math.floor(Math.random() * 2)) {
               case 0:
-                setTimeout(() => GetAudio("mococo").play(), Math.floor(Math.random() * bauPollingIntervalMillis));
+                audio = GetAudio("mococo").cloneNode(true);
                 break;
-              case 1: 
-                setTimeout(() => GetAudio("fuwawa").play(), Math.floor(Math.random() * bauPollingIntervalMillis));
+              case 1:
+                audio = GetAudio("fuwawa").cloneNode(true);
+                break;
+              default:
+                audio = null;
             }
+
+            if (audio === null) { continue; }
+
+            // Adjust the volume between min and max
+            // ts-ignore because cloned node type is missing audio methods and properties
+            // @ts-ignore
+            audio.volume = 0.3 + 0.4 * Math.random();
+            // @ts-ignore
+            setTimeout(() => audio.play(), Math.floor(Math.random() * bauPollingIntervalMillis));
           }
         }
 
         setPrevBauCount(bauCount);
         setPreviousGlobalBauCount(globalBauCount);
-        setGlobalBauCount(currentGlobalBauCount); 
+        setGlobalBauCount(currentGlobalBauCount);
       })
       .catch(err => { console.log(err); });
   }, [bauCount, globalBauCount, prevBauCount, prevGlobalBauCount]);
@@ -92,17 +107,17 @@ function App() {
 
   const PostBau = (source: string) => {
     axios.post(`${base_url}/bau?source=${source}`)
-      .then(resp => { 
+      .then(resp => {
         // Increment the local bau count here because it would be strange if the local bau count increased faster than the global bau count
         setBauCount(bauCount + 1);
-        setGlobalBauCount(resp.data['baus']); 
+        setGlobalBauCount(resp.data['baus']);
       })
       .catch(err => { console.log(err); })
   };
 
   return (
     <div className="App">
-      {showMessage && <div id='message' onClick={() => setShowMessage(false) }>
+      {showMessage && <div id='message' onClick={() => setShowMessage(false)}>
         <p>{message}</p>
       </div>}
       <div id="content">
@@ -127,7 +142,7 @@ function App() {
           >
             <img id='fuwawa-bau' src={fuwawa_bau} alt='fuwawa-bau'
               className={`animated-image ${playFuwawaBau ? 'play-bau-bau' : ''}`}
-              />
+            />
             <img id='fuwawa-default' src={fuwawa} alt='fuwawa'
               className={`animated-image front ${playFuwawaBau ? 'play-bau-bau' : ''}`} />
           </div>
@@ -147,7 +162,7 @@ function App() {
           >
             <img id='mococo-bau'
               src={mococo_bau} alt='fuwawa-bau' className={`animated-image ${playMococoBau ? 'play-bau-bau' : ''}`}
-              />
+            />
             <img id='mococo-default' src={mococo} alt='fuwawa'
               className={`animated-image front ${playMococoBau ? 'play-bau-bau' : ''}`} />
           </div>
