@@ -48,6 +48,7 @@ function App() {
   const [showMessage, setShowMessage] = useState(false);
   const [playForeignBaus, setPlayForeignBaus] = useState(false);
   const bauPollingIntervalMillis = 2000;
+  const maxForeignBausPerSecond = 2;
 
   const bauPoll = useCallback(() => {
     axios.get(`${base_url}/bau`)
@@ -61,7 +62,7 @@ function App() {
           const dForeignBaus = dGlobalBaus - dBaus;
 
           if (playForeignBaus) {
-            for (let i = 0; i < dForeignBaus; i++) {
+            for (let i = 0; i < dForeignBaus && i < maxForeignBausPerSecond * (bauPollingIntervalMillis / 1000); i++) {
               let audio: null | Node;
 
               // Clone node so that volume changes doesn't affect the original
@@ -94,7 +95,7 @@ function App() {
         setGlobalBauCount(currentGlobalBauCount);
       })
       .catch(err => { console.log(err); });
-  }, [bauCount, globalBauCount, prevBauCount, prevGlobalBauCount]);
+  }, [bauCount, globalBauCount, prevBauCount, prevGlobalBauCount, playForeignBaus]);
 
   useEffect(() => {
     axios.get(`${base_url}/bau`)
