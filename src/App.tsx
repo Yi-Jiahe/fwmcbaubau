@@ -46,7 +46,7 @@ function App() {
   const [showAbout, setShowAbout] = useState(false);
   const [message, setMessage] = useState<undefined | string>();
   const [showMessage, setShowMessage] = useState(false);
-  const bauPollingIntervalMillis = 5000;
+  const bauPollingIntervalMillis = 2000;
 
   const bauPoll = useCallback(() => {
     axios.get(`${base_url}/bau`)
