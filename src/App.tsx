@@ -50,6 +50,7 @@ THEY'RE BACK!`;
 
 function App() {
   const [globalBauCount, setGlobalBauCount] = useState("-");
+  const [bauCount, setBauCount] = useState(0);
   const [playFuwawaBau, setPlayFuwawaBau] = useState(false);
   const [playMococoBau, setPlayMococoBau] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
@@ -77,7 +78,11 @@ function App() {
 
   const PostBau = (source: string) => {
     axios.post(`${base_url}/bau?source=${source}`)
-      .then(resp => { setGlobalBauCount(resp.data['baus']); })
+      .then(resp => { 
+        // Increment the local bau count here because it would be strange if the local bau count increased faster than the global bau count
+        setBauCount(bauCount + 1);
+        setGlobalBauCount(resp.data['baus']); 
+      })
       .catch(err => { console.log(err); })
   };
 
@@ -133,6 +138,7 @@ function App() {
               className={`animated-image front ${playMococoBau ? 'play-bau-bau' : ''}`} />
           </div>
         </div>
+        <p>Bau Count: {bauCount}</p>
         <p id='subscribe'>Subscribe to <a href='https://www.youtube.com/@FUWAMOCOch'>FUWAMOCO Ch. hololive-EN</a></p>
       </div>
 
