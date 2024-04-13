@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
+import About from './About';
 import axios from 'axios';
 import fuwawa from './fuwawa_128.png';
 import fuwawa_bau from './fuwawa_bau_128.png';
 import mococo from './mococo_128.png';
 import mococo_bau from './mococo_bau_128.png'
+import { Stream } from './types';
+import StreamStatus from './StreamStatus';
 
 const base_url = "https://bau.amesame.rocks";
 const audioBaseURL = "https://d3beqw4zdoa6er.cloudfront.net";
+const youtubeChannelTrackerUrl = "https://youtube-channel-tracker.amesame.rocks";
 
 const nFuwawaAudioClips = 17;
 const nMococoAudioClips = 17;
@@ -36,6 +40,7 @@ const quotes = [
 const pinnedMessage = `FUWAMOCO IN JAPAN!
 THEY'RE BACK!`;
 
+
 function App() {
   const [globalBauCount, setGlobalBauCount] = useState("-");
   const [playFuwawaBau, setPlayFuwawaBau] = useState(false);
@@ -43,22 +48,40 @@ function App() {
   const [showAbout, setShowAbout] = useState(false);
   const [message, setMessage] = useState<undefined | string>();
   const [showMessage, setShowMessage] = useState(false);
+  const [stream, setStream] = useState<null | Stream>(null);
 
-  useEffect(() => {
+  const UpdateBauCount = () => {
     axios.get(`${base_url}/bau`)
       .then(resp => { setGlobalBauCount(resp.data['baus']); })
       .catch(err => { console.log(err); });
+  };
+
+  const UpdateStream = () => {
+    axios.get(`${youtubeChannelTrackerUrl}/api/channel/UCt9H_RpQzhxzlyBxFqrdHqA/stream`)
+      .then(resp => {
+        if (resp.data === '') {
+          setStream(null);
+          return;
+        }
+        setStream(resp.data);
+      })
+      .catch(err => { console.log(err); });
+  };
+
+  useEffect(() => {
+    UpdateBauCount();
+    UpdateStream();
 
     setMessage(pinnedMessage !== null ? pinnedMessage : quotes[Math.floor(Math.random() * quotes.length)]);
 
-    const interval = setInterval(() => {
-      axios.get(`${base_url}/bau`)
-        .then(resp => { setGlobalBauCount(resp.data['baus']); })
-        .catch(err => { console.log(err); });
-    }, 5000);
+    const interval = setInterval(() => UpdateBauCount(), 5000);
+    const streamPollingInterval = setInterval(() => UpdateStream(), 60000);
 
     //Clearing the interval
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      clearInterval(streamPollingInterval);
+    };
   }, [])
 
   const PostBau = (source: string) => {
@@ -69,7 +92,7 @@ function App() {
 
   return (
     <div className="App">
-      {showMessage && <div id='message' onClick={() => setShowMessage(false) }>
+      {showMessage && <div id='message' onClick={() => setShowMessage(false)}>
         <p>{message}</p>
       </div>}
       <div id="content">
@@ -94,7 +117,7 @@ function App() {
           >
             <img id='fuwawa-bau' src={fuwawa_bau} alt='fuwawa-bau'
               className={`animated-image ${playFuwawaBau ? 'play-bau-bau' : ''}`}
-              />
+            />
             <img id='fuwawa-default' src={fuwawa} alt='fuwawa'
               className={`animated-image front ${playFuwawaBau ? 'play-bau-bau' : ''}`} />
           </div>
@@ -114,13 +137,20 @@ function App() {
           >
             <img id='mococo-bau'
               src={mococo_bau} alt='fuwawa-bau' className={`animated-image ${playMococoBau ? 'play-bau-bau' : ''}`}
-              />
+            />
             <img id='mococo-default' src={mococo} alt='fuwawa'
               className={`animated-image front ${playMococoBau ? 'play-bau-bau' : ''}`} />
           </div>
         </div>
+
+        <div id='stream-status'>
+          <StreamStatus stream={stream} />
+        </div>
+
         <p id='subscribe'>Subscribe to <a href='https://www.youtube.com/@FUWAMOCOch'>FUWAMOCO Ch. hololive-EN</a></p>
       </div>
+
+
 
       {showAbout && <About closeAbout={() => setShowAbout(false)} />}
 
@@ -129,30 +159,6 @@ function App() {
       </footer>
     </div>
   );
-}
-
-type AboutProps = {
-  closeAbout: () => void
-}
-
-function About({ closeAbout }: AboutProps) {
-  return (
-    <div className='modal'>
-      <div className="modal-content">
-        <span className="close" onClick={() => closeAbout()}>&times;</span>
-        <p>Hello fellow Ruffian and welcome to fwmcbaubau.com!</p>
-
-        <p>To begin with, I would like to thank you for stopping by. It means a lot to me to be able contribute to the community.</p>
-
-        <p>I would also like to credit <a href='https://faunaraara.com/' target="_blank" rel="noreferrer">faunaraara.com</a> for giving me the inspiration to create this site.</p>
-
-        <p>If you have any suggestions or would like to report an issue, feel free to contact me on <a href='https://twitter.com/Activepaste1' target="_blank" rel="noreferrer">Twitter</a> or <a href='https://discordapp.com/users/196269893698453504' target="_blank" rel="noreferrer">Discord</a>.</p>
-
-        <p>fwmcbaubau.com a site built by a Ruffian for Ruffians. The use of robots for the express purpose of inflating the count is not encouraged. Measures have been taken to reduce the impact of bots, but the priority is not to impact actual Ruffians' experiences.</p>
-
-        <p>Have fun! BAU BAU 🐾</p>
-      </div>
-    </div>);
 }
 
 export default App;
