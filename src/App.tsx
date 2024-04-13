@@ -128,15 +128,19 @@ function App() {
     UpdateBauCount();
     UpdateStream();
 
-    setMessage(pinnedMessage !== null ? pinnedMessage : quotes[Math.floor(Math.random() * quotes.length)]);
-
     const streamPollingInterval = setInterval(() => UpdateStream(), 60000);
+
+    return () => {
+      clearInterval(streamPollingInterval);
+    };
+  }, []);
+
+  useEffect(() => {
     const interval = setInterval(bauPoll, bauPollingIntervalMillis);
 
     //Clearing the interval
     return () => {
       clearInterval(interval);
-      clearInterval(streamPollingInterval);
     };
   }, [bauPoll])
 
