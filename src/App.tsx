@@ -1,13 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import './App.css';
+import About from './About';
 import axios from 'axios';
 import fuwawa from './fuwawa_128.png';
 import fuwawa_bau from './fuwawa_bau_128.png';
 import mococo from './mococo_128.png';
 import mococo_bau from './mococo_bau_128.png'
+import { Stream } from './types';
+import StreamStatus from './StreamStatus';
 
 const base_url = "https://bau.amesame.rocks";
 const audioBaseURL = "https://d3beqw4zdoa6er.cloudfront.net";
+const youtubeChannelTrackerUrl = "https://youtube-channel-tracker.amesame.rocks";
 
 const nFuwawaAudioClips = 17;
 const nMococoAudioClips = 17;
@@ -36,6 +40,7 @@ const quotes = [
 const pinnedMessage = `FUWAMOCO IN JAPAN!
 THEY'RE BACK!`;
 
+
 function App() {
   const [globalBauCount, setGlobalBauCount] = useState<undefined | number>();
   const [bauCount, setBauCount] = useState(0);
@@ -46,6 +51,7 @@ function App() {
   const [showAbout, setShowAbout] = useState(false);
   const [message, setMessage] = useState<undefined | string>(pinnedMessage !== null ? pinnedMessage : quotes[Math.floor(Math.random() * quotes.length)]);
   const [showMessage, setShowMessage] = useState(false);
+  const [stream, setStream] = useState<null | Stream>(null);
   const [playForeignBaus, setPlayForeignBaus] = useState(false);
   // User must have interacted with the site to play audio at least once for audio to be played in the background
   const [userInteracted, setUserInteracted] = useState(false)
@@ -100,15 +106,38 @@ function App() {
       .catch(err => { console.log(err); });
   }, [bauCount, globalBauCount, prevBauCount, prevGlobalBauCount, playForeignBaus]);
 
-  useEffect(() => {
+  const UpdateBauCount = () => {
     axios.get(`${base_url}/bau`)
       .then(resp => { setGlobalBauCount(resp.data['baus']); })
       .catch(err => { console.log(err); });
+  };
 
+  const UpdateStream = () => {
+    axios.get(`${youtubeChannelTrackerUrl}/api/channel/UCt9H_RpQzhxzlyBxFqrdHqA/stream`)
+      .then(resp => {
+        if (resp.data === '') {
+          setStream(null);
+          return;
+        }
+        setStream(resp.data);
+      })
+      .catch(err => { console.log(err); });
+  };
+
+  useEffect(() => {
+    UpdateBauCount();
+    UpdateStream();
+
+    setMessage(pinnedMessage !== null ? pinnedMessage : quotes[Math.floor(Math.random() * quotes.length)]);
+
+    const streamPollingInterval = setInterval(() => UpdateStream(), 60000);
     const interval = setInterval(bauPoll, bauPollingIntervalMillis);
 
     //Clearing the interval
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      clearInterval(streamPollingInterval);
+    };
   }, [bauPoll])
 
   const PostBau = (source: string) => {
@@ -187,8 +216,15 @@ function App() {
           </div>
         </div>
         <p>Bau Count: {bauCount}</p>
+
+        <div id='stream-status'>
+          <StreamStatus stream={stream} />
+        </div>
+
         <p id='subscribe'>Subscribe to <a href='https://www.youtube.com/@FUWAMOCOch'>FUWAMOCO Ch. hololive-EN</a></p>
       </div>
+
+
 
       {showAbout && <About closeAbout={() => setShowAbout(false)} />}
 
@@ -197,30 +233,6 @@ function App() {
       </footer>
     </div>
   );
-}
-
-type AboutProps = {
-  closeAbout: () => void
-}
-
-function About({ closeAbout }: AboutProps) {
-  return (
-    <div className='modal'>
-      <div className="modal-content">
-        <span className="close" onClick={() => closeAbout()}>&times;</span>
-        <p>Hello fellow Ruffian and welcome to fwmcbaubau.com!</p>
-
-        <p>To begin with, I would like to thank you for stopping by. It means a lot to me to be able contribute to the community.</p>
-
-        <p>I would also like to credit <a href='https://faunaraara.com/' target="_blank" rel="noreferrer">faunaraara.com</a> for giving me the inspiration to create this site.</p>
-
-        <p>If you have any suggestions or would like to report an issue, feel free to contact me on <a href='https://twitter.com/Activepaste1' target="_blank" rel="noreferrer">Twitter</a> or <a href='https://discordapp.com/users/196269893698453504' target="_blank" rel="noreferrer">Discord</a>.</p>
-
-        <p>fwmcbaubau.com a site built by a Ruffian for Ruffians. The use of robots for the express purpose of inflating the count is not encouraged. Measures have been taken to reduce the impact of bots, but the priority is not to impact actual Ruffians' experiences.</p>
-
-        <p>Have fun! BAU BAU 🐾</p>
-      </div>
-    </div>);
 }
 
 export default App;

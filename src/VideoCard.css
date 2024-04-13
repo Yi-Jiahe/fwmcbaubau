@@ -1,0 +1,64 @@
+.video-card-link {
+  max-width: 350px;
+}
+
+.video-card {
+  max-width: 350px;
+  min-width: 300px;
+  min-height: 50px;
+  display: flex;
+  margin: 5px;
+  padding: 5px;
+  padding-left: 0px;
+  border: solid;
+  border-width: 1px;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.video-card .thumbnail-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.video-card .thumbnail {
+  width: 140px;
+  height: 79px;
+}
+
+.thumbnail.live {
+  border: solid;
+  border-radius: 5px;
+  border-color: red;
+}
+
+.live-tag {
+  position: absolute;
+  bottom: calc(50% - 37px);
+  right: 5px;
+  background-color: red;
+  border-radius: 5px;
+  padding: 2px;
+  font-size: x-small;
+  color: white;
+}
+
+.video-card .card-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin: 0px 5px;
+  line-height: 95%;
+}
+
+.video-card .title {
+  font-size: small;
+  margin-top: 0;
+}
+
+.video-card .time {
+  font-size: smaller;
+  margin: 0;
+}
