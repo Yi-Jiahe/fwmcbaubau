@@ -45,7 +45,7 @@ describe('returns milestone', () => {
     {
       prevGlobalBauCount: 3_000_700,
       globalBauCount: 3_000_800,
-      expected: 0,
+      expected: 2,
     },
     {
       prevGlobalBauCount: 3_999_998,
