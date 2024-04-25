@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+
 import './App.css';
 import About from './About';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import fuwawa from './fuwawa_128.png';
 import fuwawa_bau from './fuwawa_bau_128.png';
 import mococo from './mococo_128.png';
 import mococo_bau from './mococo_bau_128.png'
 import { Stream } from './types';
 import StreamStatus from './StreamStatus';
+import { milestonePower } from './utils';
+import { rainFwmcHearts, shootFwmcHearts, shootSideConfetti } from './confetti';
 
 const base_url = "https://bau.amesame.rocks";
 const audioBaseURL = "https://d3beqw4zdoa6er.cloudfront.net";
@@ -40,21 +43,26 @@ const quotes = [
 const pinnedMessage = `FUWAMOCO IN JAPAN!
 THEY'RE BACK!`;
 
-
 function App() {
-  const [globalBauCount, setGlobalBauCount] = useState("-");
+  // Bau Counts
+  const [globalBauCount, setGlobalBauCount] = useState<undefined | number>();
+
+  // Animation
   const [playFuwawaBau, setPlayFuwawaBau] = useState(false);
   const [playMococoBau, setPlayMococoBau] = useState(false);
+
+  // About
   const [showAbout, setShowAbout] = useState(false);
+
+  // Message
   const [message, setMessage] = useState<undefined | string>();
   const [showMessage, setShowMessage] = useState(false);
+
+  // Streaming
   const [stream, setStream] = useState<null | Stream>(null);
 
-  const UpdateBauCount = () => {
-    axios.get(`${base_url}/bau`)
-      .then(resp => { setGlobalBauCount(resp.data['baus']); })
-      .catch(err => { console.log(err); });
-  };
+  // Constants
+  const bauPollingIntervalMillis = 10000;
 
   const UpdateStream = () => {
     axios.get(`${youtubeChannelTrackerUrl}/api/channel/UCt9H_RpQzhxzlyBxFqrdHqA/stream`)
@@ -69,24 +77,66 @@ function App() {
   };
 
   useEffect(() => {
-    UpdateBauCount();
+    // Initialize bau count
+    axios.get(`${base_url}/bau`)
+      .then(resp => { setGlobalBauCount(resp.data['baus']); })
+      .catch(err => { console.log(err); });
+
     UpdateStream();
 
     setMessage(pinnedMessage !== null ? pinnedMessage : quotes[Math.floor(Math.random() * quotes.length)]);
 
-    const interval = setInterval(() => UpdateBauCount(), 5000);
     const streamPollingInterval = setInterval(() => UpdateStream(), 60000);
 
     //Clearing the interval
     return () => {
-      clearInterval(interval);
       clearInterval(streamPollingInterval);
     };
-  }, [])
+  }, []);
+
+  const parseBauResponse = useCallback((resp: AxiosResponse) => {
+    const currentGlobalBauCount = resp.data['baus'];
+
+    if (globalBauCount) {
+      switch (milestonePower(globalBauCount, currentGlobalBauCount)) {
+        case 6:
+          rainFwmcHearts(60, 1);
+          shootFwmcHearts(30, 2);
+          break;
+        case 5:
+          rainFwmcHearts(30, 1);
+          shootFwmcHearts(15, 2);
+          break;
+        case 4:
+          shootFwmcHearts(5, 2);
+          break;
+        case 3:
+          shootSideConfetti();
+          break;
+      }
+    }
+
+    setGlobalBauCount(currentGlobalBauCount);
+  }, [globalBauCount]);
+
+  const bauPoll = useCallback(() => {
+    axios.get(`${base_url}/bau`)
+      .then(resp => parseBauResponse(resp))
+      .catch(err => { console.log(err); });
+  }, [parseBauResponse]);
+
+  useEffect(() => {
+    const interval = setInterval(bauPoll, bauPollingIntervalMillis);
+
+    //Clearing the interval
+    return () => {
+      clearInterval(interval);
+    };
+  }, [bauPoll]);
 
   const PostBau = (source: string) => {
     axios.post(`${base_url}/bau?source=${source}`)
-      .then(resp => { setGlobalBauCount(resp.data['baus']); })
+      .then(resp => parseBauResponse(resp))
       .catch(err => { console.log(err); })
   };
 
