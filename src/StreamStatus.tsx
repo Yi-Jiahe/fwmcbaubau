@@ -25,7 +25,7 @@ function StreamStatus(props: StreamStatusProps) {
   const startTime = stream.ActualStartTime === undefined ? stream.ScheduledStartTime : stream.ActualStartTime;
 
   return (
-    <div>
+    <div className='stream-status'>
       <p style={{ marginBottom: '0' }}>{Date.now() >= Date.parse(startTime) ? "BAU BAU NAU!! 🐾🩵🩷" : "Next Stream:"}</p>
       <div className='card-carousel'>
         <button id='card-carousel-back-button' onClick={() => setStreamIndex(streamIndex - 1)} disabled={streamIndex <= 0}>◀ </button>
