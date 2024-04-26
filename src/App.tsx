@@ -62,7 +62,7 @@ function App() {
   const [stream, setStream] = useState<null | Stream>(null);
 
   // Constants
-  const bauPollingIntervalMillis = 10000;
+  const bauPollingIntervalMillis = 2000;
 
   const UpdateStream = () => {
     axios.get(`${youtubeChannelTrackerUrl}/api/channel/UCt9H_RpQzhxzlyBxFqrdHqA/stream`)
