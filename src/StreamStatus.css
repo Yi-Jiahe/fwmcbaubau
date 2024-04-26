@@ -1,0 +1,26 @@
+.stream-status {
+  height: 100%;
+}
+
+.card-carousel {
+  height: 75%;
+  display: flex;
+  align-items: center;
+}
+
+.card-carousel button {
+  height: 75%;
+  width: 50px;
+  border-radius: 25px;
+  font-weight: bold;
+}
+
+#card-carousel-back-button {
+  border-color: var(--mococo-pink);
+  background-color: var(--fuwamoco-blond);
+}
+
+#card-carousel-forward-button {
+  border-color: var(--fuwawa-blue);
+  background-color: var(--fuwamoco-blond);
+}
