@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import './VideoCard.css';
 
 type VideoCardProps = {
@@ -16,20 +16,25 @@ function VideoCard(props: VideoCardProps) {
   const [timeDifference, setTimeDifference] = useState<undefined | number>();
   const [started, setStarted] = useState<undefined | boolean>();
 
+  const updateTimings = useCallback(() => {
+    let dt = Date.now() - Date.parse(props.startTime);
+    const s = dt > 0 ? true : false;
+    if (!s) {
+      dt *= -1;
+    }
+    setStarted(s)
+    setTimeDifference(dt)
+  }, [props.startTime]);
+
   useEffect(() => {
+    updateTimings();
     const interval = setInterval(() => {
-      let dt = Date.now() - Date.parse(props.startTime);
-      const s = dt > 0 ? true : false;
-      if (!s) {
-        dt *= -1;
-      }
-      setStarted(s)
-      setTimeDifference(dt)
-    }, 10);
+      updateTimings();
+    }, 1000);
     return () => {
       clearInterval(interval);
     };
-  }, [props.startTime])
+  }, [updateTimings])
 
 
   return (
