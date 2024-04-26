@@ -44,6 +44,10 @@ a {
   text-decoration: none;
 }
 
+button {
+  cursor: pointer;
+}
+
 #content {
   height: 100%;
   display: flex;
