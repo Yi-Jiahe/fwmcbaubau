@@ -13,7 +13,7 @@ function StreamStatus(props: StreamStatusProps) {
   if (props.streams === null) {
     return (
       <div>
-        <p style={{marginBottom: '0'}}>Next Stream:</p>
+        <p style={{ marginBottom: '0' }}>Next Stream:</p>
         <EmptyVideoCard />
       </div>
     );
@@ -21,18 +21,18 @@ function StreamStatus(props: StreamStatusProps) {
 
 
   const stream = props.streams[streamIndex];
-  
+
   const startTime = stream.ActualStartTime === undefined ? stream.ScheduledStartTime : stream.ActualStartTime;
 
   return (
-        <div>
-          <p style={{marginBottom: '0'}}>{Date.now() >= Date.parse(startTime) ? "BAU BAU NAU!! 🐾🩵🩷" : "Next Stream:" }</p>
-          <div className='card-carousel'>
-            <button onClick={() => setStreamIndex(streamIndex - 1)} disabled={streamIndex <= 0}>{'<'}</button>
-            <VideoCard link={`https://www.youtube.com/watch?v=${stream.Id}`} thumbnail={stream.Thumbnail} title={stream.Title} startTime={startTime}></VideoCard>
-            <button onClick={() => setStreamIndex(streamIndex + 1)} disabled={streamIndex >= props.streams.length - 1}>{'>'}</button>
-          </div>
-        </div>
+    <div>
+      <p style={{ marginBottom: '0' }}>{Date.now() >= Date.parse(startTime) ? "BAU BAU NAU!! 🐾🩵🩷" : "Next Stream:"}</p>
+      <div className='card-carousel'>
+        <button id='card-carousel-back-button' onClick={() => setStreamIndex(streamIndex - 1)} disabled={streamIndex <= 0}>◀ </button>
+        <VideoCard link={`https://www.youtube.com/watch?v=${stream.Id}`} thumbnail={stream.Thumbnail} title={stream.Title} startTime={startTime}></VideoCard>
+        <button id='card-carousel-forward-button' onClick={() => setStreamIndex(streamIndex + 1)} disabled={streamIndex >= props.streams.length - 1}>▶</button>
+      </div>
+    </div>
   );
 }
 

@@ -7,4 +7,17 @@
   height: 30px;
   width: 30px;
   border-radius: 15px;
+  font-weight: bold;
+}
+
+#card-carousel-back-button {
+  border-color: var(--mococo-pink);
+  background-color: var(--fuwamoco-blond);
+  /* color: var(--mococo-dark-pink); */
+}
+
+#card-carousel-forward-button {
+  border-color: var(--fuwawa-blue);
+  background-color: var(--fuwamoco-blond);
+  /* color: var(--fuwawa-dark-blue); */
 }
