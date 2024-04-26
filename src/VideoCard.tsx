@@ -25,7 +25,7 @@ function VideoCard(props: VideoCardProps) {
       }
       setStarted(s)
       setTimeDifference(dt)
-    }, 1000);
+    }, 10);
     return () => {
       clearInterval(interval);
     };

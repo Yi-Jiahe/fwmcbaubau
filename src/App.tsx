@@ -59,19 +59,28 @@ function App() {
   const [showMessage, setShowMessage] = useState(false);
 
   // Streaming
-  const [stream, setStream] = useState<null | Stream>(null);
+  const [streams, setStreams] = useState<null | Array<Stream>>(null);
 
   // Constants
   const bauPollingIntervalMillis = 2000;
 
   const UpdateStream = () => {
-    axios.get(`${youtubeChannelTrackerUrl}/api/channel/UCt9H_RpQzhxzlyBxFqrdHqA/stream`)
+    axios.get(`${youtubeChannelTrackerUrl}/api/channel/UCt9H_RpQzhxzlyBxFqrdHqA/streams`)
       .then(resp => {
         if (resp.data === '') {
-          setStream(null);
+          setStreams(null);
           return;
         }
-        setStream(resp.data);
+
+        setStreams(resp.data.sort((a: Stream, b: Stream) => {
+          const startTimeA = a.ActualStartTime === undefined ? a.ScheduledStartTime : a.ActualStartTime;
+          const startTimeB = b.ActualStartTime === undefined ? b.ScheduledStartTime : b.ActualStartTime;
+
+          if (startTimeA < startTimeB) { return -1; }
+          if (startTimeA > startTimeB) { return 1; }
+          return 0;
+        }
+        ));
       })
       .catch(err => { console.log(err); });
   };
@@ -194,7 +203,7 @@ function App() {
         </div>
 
         <div id='stream-status'>
-          <StreamStatus stream={stream} />
+          <StreamStatus streams={streams} />
         </div>
 
         <p id='subscribe'>Subscribe to <a href='https://www.youtube.com/@FUWAMOCOch'>FUWAMOCO Ch. hololive-EN</a></p>

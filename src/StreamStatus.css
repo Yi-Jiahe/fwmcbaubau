@@ -1,0 +1,10 @@
+.card-carousel {
+  display: flex;
+  align-items: center;
+}
+
+.card-carousel button {
+  height: 30px;
+  width: 30px;
+  border-radius: 15px;
+}
