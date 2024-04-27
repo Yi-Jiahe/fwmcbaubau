@@ -10,7 +10,7 @@ type StreamStatusProps = {
 function StreamStatus(props: StreamStatusProps) {
   const [streamIndex, setStreamIndex] = useState(0);
 
-  if (props.streams === null) {
+  if (props.streams === null || props.streams.length === 0) {
     return (
       <div>
         <p style={{ marginBottom: '0' }}>Next Stream:</p>
