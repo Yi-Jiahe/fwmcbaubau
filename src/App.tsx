@@ -69,7 +69,6 @@ function App() {
   const [playGlobalBausSetting, setPlayGlobalBausSetting] = useState(false);
   // User must have interacted with the site to play audio at least once for audio to be played in the background
   const [userInteracted, setUserInteracted] = useState(false)
-  const [lastCountsUpdated, setLastCountsUpdated] = useState<undefined | number>();
 
   // Constants
   const bauPollingIntervalMillis = 2000;
@@ -111,18 +110,40 @@ function App() {
     };
   }, []);
 
-  const parseBauResponse = useCallback((resp: AxiosResponse) => {
-    const currentGlobalBauCount = resp.data['baus'];
+  const playConfetti = useCallback((currentGlobalBauCount: number) => {
+    if (globalBauCount === undefined) {
+      return;
+    }
 
+    // Confetti
+    switch (milestonePower(globalBauCount, currentGlobalBauCount)) {
+      case 6:
+        rainFwmcHearts(60, 1);
+        shootFwmcHearts(30, 2);
+        break;
+      case 5:
+        rainFwmcHearts(30, 1);
+        shootFwmcHearts(15, 2);
+        break;
+      case 4:
+        shootFwmcHearts(5, 2);
+        break;
+      case 3:
+        shootSideConfetti();
+        break;
+    }
+  }, [globalBauCount]);
+
+  const playGlobalBaus = useCallback((currentGlobalBauCount: number) => {
     if (globalBauCount) {
-      if (playGlobalBausSetting && bauCount && prevBauCount && lastCountsUpdated) {
+      if (playGlobalBausSetting && bauCount && prevBauCount) {
         const dGlobalBaus = currentGlobalBauCount - globalBauCount;
         const dBaus = bauCount - prevBauCount;
         const dForeignBaus = dGlobalBaus - dBaus;
 
-        const dt = Date.now() - lastCountsUpdated;
+        for (let i = 0; i < dForeignBaus && i < maxGlobalBausPlayedPerSecond * (bauPollingIntervalMillis / 1000); i++) {
+          console.log(i);
 
-        for (let i = 0; i < dForeignBaus && i < maxGlobalBausPlayedPerSecond * (dt / 1000); i++) {
           let audio: null | Node;
 
           // Clone node so that volume changes doesn't affect the original
@@ -144,39 +165,31 @@ function App() {
           // @ts-ignore
           audio.volume = 0.3 + 0.4 * Math.random();
           // @ts-ignore
-          setTimeout(() => audio.play(), Math.floor(Math.random() * dt));
+          setTimeout(() => audio.play(), Math.floor(Math.random() * bauPollingIntervalMillis));
         }
       }
-
-      // Confetti
-      switch (milestonePower(globalBauCount, currentGlobalBauCount)) {
-        case 6:
-          rainFwmcHearts(60, 1);
-          shootFwmcHearts(30, 2);
-          break;
-        case 5:
-          rainFwmcHearts(30, 1);
-          shootFwmcHearts(15, 2);
-          break;
-        case 4:
-          shootFwmcHearts(5, 2);
-          break;
-        case 3:
-          shootSideConfetti();
-          break;
-      }
     }
+  }, [playGlobalBausSetting, bauCount, prevBauCount, globalBauCount]);
+
+  const parseBauResponse = useCallback((resp: AxiosResponse, hooks: Array<(currentGlobalBauCount: number) => void>) => {
+    const currentGlobalBauCount = resp.data['baus'];
+
+    hooks.forEach(hook => hook(currentGlobalBauCount));
 
     setPrevBauCount(bauCount);
     setGlobalBauCount(currentGlobalBauCount);
-    setLastCountsUpdated(Date.now());
-  }, [globalBauCount, bauCount, prevBauCount, playGlobalBausSetting, lastCountsUpdated]);
+  }, [bauCount]);
 
   const bauPoll = useCallback(() => {
     axios.get(`${base_url}/bau`)
-      .then(resp => parseBauResponse(resp))
+      .then(resp => {
+        parseBauResponse(resp, [
+          playConfetti,
+          playGlobalBaus,
+        ])
+      })
       .catch(err => { console.log(err); });
-  }, [parseBauResponse]);
+  }, [parseBauResponse, playConfetti, playGlobalBaus]);
 
   useEffect(() => {
     const interval = setInterval(bauPoll, bauPollingIntervalMillis);
@@ -191,7 +204,9 @@ function App() {
     axios.post(`${base_url}/bau?source=${source}`)
       .then(resp => {
         setBauCount(bauCount + 1);
-        parseBauResponse(resp);
+        parseBauResponse(resp, [
+          playConfetti,
+        ])
       })
       .catch(err => { console.log(err); })
   };
