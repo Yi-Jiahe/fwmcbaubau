@@ -10,6 +10,7 @@ import { Stream } from './types';
 import StreamStatus from './StreamStatus';
 import { milestonePower } from './utils';
 import { rainFwmcHearts, shootFwmcHearts, shootSideConfetti } from './confetti';
+import Settings from './Settings';
 
 const base_url = "https://bau.amesame.rocks";
 const audioBaseURL = "https://d3beqw4zdoa6er.cloudfront.net";
@@ -52,8 +53,10 @@ function App() {
   const [playFuwawaBau, setPlayFuwawaBau] = useState(false);
   const [playMococoBau, setPlayMococoBau] = useState(false);
 
-  // About
+  // Modals
+  const [showSettings, setShowSettings] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
+
 
   // Message
   const [message, setMessage] = useState<undefined | string>(pinnedMessage !== null ? pinnedMessage : quotes[Math.floor(Math.random() * quotes.length)]);
@@ -193,21 +196,21 @@ function App() {
       .catch(err => { console.log(err); })
   };
 
+  // In order to allow the site to play audio, the user must have interacted with the site to play audio first
+  useEffect(() => {
+    if (playGlobalBausSetting && !userInteracted) {
+      setMessage("BAU BAU to confirm tuning in to global baus!");
+      setShowMessage(true);
+    }
+  }, [playGlobalBausSetting, userInteracted])
+
   return (
     <div className="App">
       {showMessage && <div id='message' onClick={() => setShowMessage(false)}>
         <p>{message}</p>
       </div>}
 
-      <input id='play-global-baus-checkbox' type='checkbox' checked={playGlobalBausSetting} onChange={() => {
-        // In order to allow the site to play audio, the user must have interacted with the site to play audio first
-        if (!playGlobalBausSetting && !userInteracted) {
-          setMessage("BAU BAU to confirm tuning in to global baus!");
-          setShowMessage(true);
-        }
-        setPlayGlobalBausSetting(!playGlobalBausSetting)
-      }} />
-      <label htmlFor='play-global-baus-checkbox'>Play Global Baus</label>
+      <img id='show-settings' src="./settings.svg" alt="settings" width='24px' height='24px' onClick={() => setShowSettings(true)} />
 
       <div id="content">
         <p id='global-bau-counter'>{globalBauCount ? globalBauCount : "-"}</p>
@@ -268,11 +271,16 @@ function App() {
       </div>
 
 
-
+      {showSettings &&
+        <Settings
+          closeSettings={() => setShowSettings(false)}
+          playGlobalBausSetting={playGlobalBausSetting}
+          setPlayGlobalBausSetting={setPlayGlobalBausSetting} />
+      }
       {showAbout && <About closeAbout={() => setShowAbout(false)} />}
 
       <footer>
-        <button className='footer-button' onClick={() => { console.log("about clicked"); setShowAbout(true); }}>About</button>
+        <button className='footer-button' onClick={() => { setShowAbout(true); }}>About</button>
       </footer>
     </div>
   );
