@@ -16,8 +16,12 @@ function Settings({ closeSettings, playGlobalBausSetting, setPlayGlobalBausSetti
         <input type='checkbox' checked={playGlobalBausSetting}
           onChange={() => setPlayGlobalBausSetting(!playGlobalBausSetting)} />
         <div className='custom-checkbox' />
-        <span>Play Global Baus</span>
+        <div className='tooltip'>
+          <span>Play Global Baus</span>
+          <span className='tooltip-text'>When enabled, other Ruffians BAU BAUs can also be heard.</span>
+        </div>
       </label>
+
 
     </Modal>
   );
