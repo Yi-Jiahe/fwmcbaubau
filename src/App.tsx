@@ -1,13 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import About from './About';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import fuwawa from './fuwawa_128.png';
 import fuwawa_bau from './fuwawa_bau_128.png';
 import mococo from './mococo_128.png';
 import mococo_bau from './mococo_bau_128.png'
 import { Stream } from './types';
 import StreamStatus from './StreamStatus';
+import { milestonePower } from './utils';
+import { rainFwmcHearts, shootFwmcHearts, shootSideConfetti } from './confetti';
 
 const base_url = "https://bau.amesame.rocks";
 const audioBaseURL = "https://d3beqw4zdoa6er.cloudfront.net";
@@ -40,92 +42,62 @@ const quotes = [
 const pinnedMessage = `FUWAMOCO IN JAPAN!
 THEY'RE BACK!`;
 
-
 function App() {
+  // Bau Counts
   const [globalBauCount, setGlobalBauCount] = useState<undefined | number>();
   const [bauCount, setBauCount] = useState(0);
-  const [prevGlobalBauCount, setPreviousGlobalBauCount] = useState<undefined | number>();
   const [prevBauCount, setPrevBauCount] = useState(0);
+
+  // Animation
   const [playFuwawaBau, setPlayFuwawaBau] = useState(false);
   const [playMococoBau, setPlayMococoBau] = useState(false);
+
+  // About
   const [showAbout, setShowAbout] = useState(false);
+
+  // Message
   const [message, setMessage] = useState<undefined | string>(pinnedMessage !== null ? pinnedMessage : quotes[Math.floor(Math.random() * quotes.length)]);
   const [showMessage, setShowMessage] = useState(false);
-  const [stream, setStream] = useState<null | Stream>(null);
+
+  // Streaming
+  const [streams, setStreams] = useState<null | Array<Stream>>(null);
+
+  // ??  
   const [playForeignBaus, setPlayForeignBaus] = useState(false);
   // User must have interacted with the site to play audio at least once for audio to be played in the background
   const [userInteracted, setUserInteracted] = useState(false)
+
+  // Constants
   const bauPollingIntervalMillis = 2000;
   const maxForeignBausPerSecond = 2;
 
-  const bauPoll = useCallback(() => {
-    axios.get(`${base_url}/bau`)
-      .then(resp => {
-        const currentGlobalBauCount = resp.data['baus'];
-
-        if (globalBauCount && prevGlobalBauCount && prevBauCount) {
-          // Only baus not from the user are to be played
-          const dGlobalBaus = globalBauCount - prevGlobalBauCount;
-          const dBaus = bauCount - prevBauCount;
-          const dForeignBaus = dGlobalBaus - dBaus;
-
-          if (playForeignBaus) {
-            for (let i = 0; i < dForeignBaus && i < maxForeignBausPerSecond * (bauPollingIntervalMillis / 1000); i++) {
-              console.log(i);
-              let audio: null | Node;
-
-              // Clone node so that volume changes doesn't affect the original
-              switch (Math.floor(Math.random() * 2)) {
-                case 0:
-                  audio = GetAudio("mococo").cloneNode(true);
-                  break;
-                case 1:
-                  audio = GetAudio("fuwawa").cloneNode(true);
-                  break;
-                default:
-                  audio = null;
-              }
-
-              if (audio === null) { continue; }
-
-              // Adjust the volume between min and max
-              // ts-ignore because cloned node type is missing audio methods and properties
-              // @ts-ignore
-              audio.volume = 0.3 + 0.4 * Math.random();
-              // @ts-ignore
-              setTimeout(() => audio.play(), Math.floor(Math.random() * bauPollingIntervalMillis));
-            }
-          }
-
-        }
-
-        setPrevBauCount(bauCount);
-        setPreviousGlobalBauCount(globalBauCount);
-        setGlobalBauCount(currentGlobalBauCount);
-      })
-      .catch(err => { console.log(err); });
-  }, [bauCount, globalBauCount, prevBauCount, prevGlobalBauCount, playForeignBaus]);
-
-  const UpdateBauCount = () => {
-    axios.get(`${base_url}/bau`)
-      .then(resp => { setGlobalBauCount(resp.data['baus']); })
-      .catch(err => { console.log(err); });
-  };
-
   const UpdateStream = () => {
-    axios.get(`${youtubeChannelTrackerUrl}/api/channel/UCt9H_RpQzhxzlyBxFqrdHqA/stream`)
+    axios.get(`${youtubeChannelTrackerUrl}/api/channel/UCt9H_RpQzhxzlyBxFqrdHqA/streams`)
       .then(resp => {
         if (resp.data === '') {
-          setStream(null);
+          setStreams(null);
           return;
         }
-        setStream(resp.data);
+
+        setStreams(resp.data.sort((a: Stream, b: Stream) => {
+          const startTimeA = a.ActualStartTime === undefined ? a.ScheduledStartTime : a.ActualStartTime;
+          const startTimeB = b.ActualStartTime === undefined ? b.ScheduledStartTime : b.ActualStartTime;
+
+          if (startTimeA < startTimeB) { return -1; }
+          if (startTimeA > startTimeB) { return 1; }
+          return 0;
+        }
+        ));
       })
       .catch(err => { console.log(err); });
   };
 
   useEffect(() => {
-    UpdateBauCount();
+    // Initialize bau count
+    axios.get(`${base_url}/bau`)
+      .then(resp => { setGlobalBauCount(resp.data['baus']); })
+      .catch(err => { console.log(err); });
+
     UpdateStream();
 
     const streamPollingInterval = setInterval(() => UpdateStream(), 60000);
@@ -135,6 +107,71 @@ function App() {
     };
   }, []);
 
+  const parseBauResponse = useCallback((resp: AxiosResponse) => {
+    const currentGlobalBauCount = resp.data['baus'];
+
+    if (globalBauCount) {
+      // Global Bau Playing
+      if (playForeignBaus && bauCount && prevBauCount) {
+        const dGlobalBaus = currentGlobalBauCount - globalBauCount;
+        const dBaus = bauCount - prevBauCount;
+        const dForeignBaus = dGlobalBaus - dBaus;
+
+        for (let i = 0; i < dForeignBaus && i < maxForeignBausPerSecond * (bauPollingIntervalMillis / 1000); i++) {
+          let audio: null | Node;
+
+          // Clone node so that volume changes doesn't affect the original
+          switch (Math.floor(Math.random() * 2)) {
+            case 0:
+              audio = GetAudio("mococo").cloneNode(true);
+              break;
+            case 1:
+              audio = GetAudio("fuwawa").cloneNode(true);
+              break;
+            default:
+              audio = null;
+          }
+
+          if (audio === null) { continue; }
+
+          // Adjust the volume between min and max
+          // ts-ignore because cloned node type is missing audio methods and properties
+          // @ts-ignore
+          audio.volume = 0.3 + 0.4 * Math.random();
+          // @ts-ignore
+          setTimeout(() => audio.play(), Math.floor(Math.random() * bauPollingIntervalMillis));
+        }
+      }
+
+      // Confetti
+      switch (milestonePower(globalBauCount, currentGlobalBauCount)) {
+        case 6:
+          rainFwmcHearts(60, 1);
+          shootFwmcHearts(30, 2);
+          break;
+        case 5:
+          rainFwmcHearts(30, 1);
+          shootFwmcHearts(15, 2);
+          break;
+        case 4:
+          shootFwmcHearts(5, 2);
+          break;
+        case 3:
+          shootSideConfetti();
+          break;
+      }
+    }
+
+    setPrevBauCount(bauCount);
+    setGlobalBauCount(currentGlobalBauCount);
+  }, [globalBauCount, bauCount, prevBauCount, playForeignBaus]);
+
+  const bauPoll = useCallback(() => {
+    axios.get(`${base_url}/bau`)
+      .then(resp => parseBauResponse(resp))
+      .catch(err => { console.log(err); });
+  }, [parseBauResponse]);
+
   useEffect(() => {
     const interval = setInterval(bauPoll, bauPollingIntervalMillis);
 
@@ -142,14 +179,13 @@ function App() {
     return () => {
       clearInterval(interval);
     };
-  }, [bauPoll])
+  }, [bauPoll]);
 
   const PostBau = (source: string) => {
     axios.post(`${base_url}/bau?source=${source}`)
       .then(resp => {
-        // Increment the local bau count here because it would be strange if the local bau count increased faster than the global bau count
         setBauCount(bauCount + 1);
-        setGlobalBauCount(resp.data['baus']);
+        parseBauResponse(resp);
       })
       .catch(err => { console.log(err); })
   };
@@ -222,7 +258,7 @@ function App() {
         <p>Bau Count: {bauCount}</p>
 
         <div id='stream-status'>
-          <StreamStatus stream={stream} />
+          <StreamStatus streams={streams} />
         </div>
 
         <p id='subscribe'>Subscribe to <a href='https://www.youtube.com/@FUWAMOCOch'>FUWAMOCO Ch. hololive-EN</a></p>
