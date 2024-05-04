@@ -1,0 +1,42 @@
+/* Center align the label text */
+label {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+/* Adjust the position of the label text */
+label span {
+  margin-top: 0px; /* Move the text up */
+  margin-left: 10px;
+  font-size: 20px;
+}
+
+/* Hide the default checkbox */
+input[type="checkbox"] {
+  display: none;
+}
+
+/* Style the custom checkbox */
+.custom-checkbox {
+  display: inline-block;
+  margin-top: 0px;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #ccc;
+  position: relative;
+  cursor: pointer;
+}
+
+/* Show the checkmark when checkbox is checked */
+input[type="checkbox"]:checked + .custom-checkbox::after {
+  content: '\2715'; /* Unicode for a cross symbol */
+  /* Center the cross */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--mococo-pink); /* Pink color for the cross */
+  font-size: 24px; /* Adjust the size of the cross */
+  font-weight: bold; /* Make the cross bold */
+}
