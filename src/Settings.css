@@ -7,9 +7,9 @@ label {
 
 /* Adjust the position of the label text */
 label span {
-  margin-top: 0px; /* Move the text up */
+  margin-top: 3px; /* Move the text vertically */
   margin-left: 10px;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 /* Hide the default checkbox */
