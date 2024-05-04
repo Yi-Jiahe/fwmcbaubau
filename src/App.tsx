@@ -62,14 +62,15 @@ function App() {
   // Streaming
   const [streams, setStreams] = useState<null | Array<Stream>>(null);
 
-  // ??  
-  const [playForeignBaus, setPlayForeignBaus] = useState(false);
+  // Play Global Baus
+  const [playGlobalBausSetting, setPlayGlobalBausSetting] = useState(false);
   // User must have interacted with the site to play audio at least once for audio to be played in the background
   const [userInteracted, setUserInteracted] = useState(false)
+  const [lastCountsUpdated, setLastCountsUpdated] = useState<undefined | number>();
 
   // Constants
   const bauPollingIntervalMillis = 2000;
-  const maxForeignBausPerSecond = 2;
+  const maxGlobalBausPlayedPerSecond = 2;
 
   const UpdateStream = () => {
     axios.get(`${youtubeChannelTrackerUrl}/api/channel/UCt9H_RpQzhxzlyBxFqrdHqA/streams`)
@@ -111,13 +112,14 @@ function App() {
     const currentGlobalBauCount = resp.data['baus'];
 
     if (globalBauCount) {
-      // Global Bau Playing
-      if (playForeignBaus && bauCount && prevBauCount) {
+      if (playGlobalBausSetting && bauCount && prevBauCount && lastCountsUpdated) {
         const dGlobalBaus = currentGlobalBauCount - globalBauCount;
         const dBaus = bauCount - prevBauCount;
         const dForeignBaus = dGlobalBaus - dBaus;
 
-        for (let i = 0; i < dForeignBaus && i < maxForeignBausPerSecond * (bauPollingIntervalMillis / 1000); i++) {
+        const dt = Date.now() - lastCountsUpdated;
+
+        for (let i = 0; i < dForeignBaus && i < maxGlobalBausPlayedPerSecond * (dt / 1000); i++) {
           let audio: null | Node;
 
           // Clone node so that volume changes doesn't affect the original
@@ -139,7 +141,7 @@ function App() {
           // @ts-ignore
           audio.volume = 0.3 + 0.4 * Math.random();
           // @ts-ignore
-          setTimeout(() => audio.play(), Math.floor(Math.random() * bauPollingIntervalMillis));
+          setTimeout(() => audio.play(), Math.floor(Math.random() * dt));
         }
       }
 
@@ -164,7 +166,8 @@ function App() {
 
     setPrevBauCount(bauCount);
     setGlobalBauCount(currentGlobalBauCount);
-  }, [globalBauCount, bauCount, prevBauCount, playForeignBaus]);
+    setLastCountsUpdated(Date.now());
+  }, [globalBauCount, bauCount, prevBauCount, playGlobalBausSetting, lastCountsUpdated]);
 
   const bauPoll = useCallback(() => {
     axios.get(`${base_url}/bau`)
@@ -196,15 +199,15 @@ function App() {
         <p>{message}</p>
       </div>}
 
-      <input id='play-foreign-baus-checkbox' type='checkbox' checked={playForeignBaus} onChange={() => {
+      <input id='play-global-baus-checkbox' type='checkbox' checked={playGlobalBausSetting} onChange={() => {
         // In order to allow the site to play audio, the user must have interacted with the site to play audio first
-        if (!playForeignBaus && !userInteracted) {
-          setMessage("BAU BAU to confirm opting in to foreign baus!");
+        if (!playGlobalBausSetting && !userInteracted) {
+          setMessage("BAU BAU to confirm tuning in to global baus!");
           setShowMessage(true);
         }
-        setPlayForeignBaus(!playForeignBaus)
+        setPlayGlobalBausSetting(!playGlobalBausSetting)
       }} />
-      <label htmlFor='play-foreign-baus-checkbox'>Play Foreign Baus</label>
+      <label htmlFor='play-global-baus-checkbox'>Play Global Baus</label>
 
       <div id="content">
         <p id='global-bau-counter'>{globalBauCount ? globalBauCount : "-"}</p>
