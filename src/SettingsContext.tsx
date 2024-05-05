@@ -1,4 +1,5 @@
-import { ReactNode, createContext, useReducer } from 'react';
+import { ReactNode, createContext, useEffect, useReducer } from 'react';
+import { setGlobalBauVolume, setMasterGain } from './Audio';
 
 export const SettingsContext = createContext<null | Settings>(null);
 export const SettingsDispatchContext = createContext<null | React.Dispatch<any>>(null);
@@ -8,6 +9,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     const storedSettings = localStorage.getItem("settings");
     return storedSettings === null ? initialSettings : JSON.parse(storedSettings);
   }());
+
+  useEffect(() => {
+    setMasterGain(settings.masterVolume);
+    setGlobalBauVolume(settings.globalBausVolume);
+  }, [])
 
   return (
     <SettingsContext.Provider value={settings} >
@@ -35,12 +41,14 @@ function settingsReducer(settings: Settings, action: any): Settings {
         }
         break;
     case 'setMasterVolume':
+      setMasterGain(action.value);
       newSettings = {
         ...settings,
         masterVolume: action.value
       } 
       break;
     case 'setGlobalBausVolume':
+      setGlobalBauVolume(action.value);
       newSettings = {
         ...settings,
         globalBausVolume: action.value

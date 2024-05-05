@@ -12,6 +12,7 @@ import { milestonePower } from './utils';
 import { rainFwmcHearts, shootFwmcHearts, shootSideConfetti } from './confetti';
 import Settings from './Settings';
 import { SettingsContext } from './SettingsContext';
+import { enableAudioContext, playBau, playGlobalBau } from './Audio';
 
 const base_url = "https://bau.amesame.rocks";
 const audioBaseURL = "https://d3beqw4zdoa6er.cloudfront.net";
@@ -20,8 +21,19 @@ const youtubeChannelTrackerUrl = "https://youtube-channel-tracker.amesame.rocks"
 const nFuwawaAudioClips = 17;
 const nMococoAudioClips = 17;
 
-const FuwawaAudioClips = [...Array(nFuwawaAudioClips)].map((_, i) => new Audio(`${audioBaseURL}/Fuwawa_BauBau_${i + 1}.mp3`));
-const MococoAudioClips = [...Array(nMococoAudioClips)].map((_, i) => new Audio(`${audioBaseURL}/Mococo_BauBau_${i + 1}.mp3`));
+const FuwawaAudioClips = [...Array(nFuwawaAudioClips)].map((_, i) => {
+  const audio = new Audio();
+  audio.crossOrigin = "anonymous";
+  audio.src = `${audioBaseURL}/Fuwawa_BauBau_${i + 1}.mp3`;
+  return audio;
+}
+);
+const MococoAudioClips = [...Array(nMococoAudioClips)].map((_, i) => {
+  const audio = new Audio(`${audioBaseURL}/Mococo_BauBau_${i + 1}.mp3`);
+  audio.crossOrigin = "anonymous";
+  audio.src = `${audioBaseURL}/Mococo_BauBau_${i + 1}.mp3`;
+  return audio;
+});
 
 const quotes = [
   "To Bau or not to Bau",
@@ -78,10 +90,8 @@ function App() {
         throw new Error("Unknown source");
     }
 
-    audio.volume = settings === null ? 1 : settings.masterVolume;
-
     return audio
-  }, [settings]);
+  }, []);
 
   const UpdateStream = () => {
     axios.get(`${youtubeChannelTrackerUrl}/api/channel/UCt9H_RpQzhxzlyBxFqrdHqA/streams`)
@@ -168,7 +178,7 @@ function App() {
 
           // Adjust the volume to the globalBausVolume * a random value between minGlobalBauVolume and 1
           audio.volume = settings.globalBausVolume * (minGlobalBauVolume + (1 - minGlobalBauVolume) * Math.random());
-          setTimeout(() => audio.play(), Math.floor(Math.random() * bauPollingIntervalMillis));
+          setTimeout(() => playGlobalBau(audio), Math.floor(Math.random() * bauPollingIntervalMillis));
         }
       }
     }
@@ -238,10 +248,11 @@ function App() {
           <div
             id='fuwawa'
             onClick={() => {
+              enableAudioContext();
+              setUserInteracted(true);
+
               const a = GetAudio("fuwawa");
-              a.play().then(
-                () => {
-                  setUserInteracted(true);
+              playBau(a, () => {
                   if (!playFuwawaBau) {
                     setPlayFuwawaBau(true);
                     setTimeout(() => { setPlayFuwawaBau(false) }, 1200);
@@ -260,16 +271,17 @@ function App() {
           <div
             id='mococo'
             onClick={() => {
+              enableAudioContext();
+              setUserInteracted(true);
+
               const a = GetAudio("mococo");
-              a.play()
-                .then(() => {
-                  setUserInteracted(true);
-                  if (!playMococoBau) {
-                    setPlayMococoBau(true);
-                    setTimeout(() => { setPlayMococoBau(false) }, 1200);
-                  }
-                  PostBau("mococo");
-                });
+              playBau(a, () => {
+                if (!playMococoBau) {
+                  setPlayMococoBau(true);
+                  setTimeout(() => { setPlayMococoBau(false) }, 1200);
+                }
+                PostBau("mococo");
+              });
             }}
           >
             <img id='mococo-bau'
