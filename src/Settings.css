@@ -1,0 +1,70 @@
+/* Center align the label text */
+label {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+/* Adjust the position of the label text */
+label span {
+  margin-top: 3px; /* Move the text vertically */
+  margin-left: 10px;
+  font-size: 18px;
+}
+
+/* Hide the default checkbox */
+input[type="checkbox"] {
+  display: none;
+}
+
+/* Style the custom checkbox */
+.custom-checkbox {
+  display: inline-block;
+  margin-top: 0px;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #ccc;
+  position: relative;
+  cursor: pointer;
+}
+
+/* Show the checkmark when checkbox is checked */
+input[type="checkbox"]:checked + .custom-checkbox::after {
+  content: '\2715'; /* Unicode for a cross symbol */
+  /* Center the cross */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--mococo-pink); /* Pink color for the cross */
+  font-size: 24px; /* Adjust the size of the cross */
+  font-weight: bold; /* Make the cross bold */
+}
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip text */
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 200px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+ 
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 0%;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+}
