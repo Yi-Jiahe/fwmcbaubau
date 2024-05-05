@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import './App.css';
 import About from './About';
 import axios, { AxiosResponse } from 'axios';
@@ -11,6 +11,7 @@ import StreamStatus from './StreamStatus';
 import { milestonePower } from './utils';
 import { rainFwmcHearts, shootFwmcHearts, shootSideConfetti } from './confetti';
 import Settings from './Settings';
+import { SettingsContext } from './SettingsContext';
 
 const base_url = "https://bau.amesame.rocks";
 const audioBaseURL = "https://d3beqw4zdoa6er.cloudfront.net";
@@ -21,17 +22,6 @@ const nMococoAudioClips = 17;
 
 const FuwawaAudioClips = [...Array(nFuwawaAudioClips)].map((_, i) => new Audio(`${audioBaseURL}/Fuwawa_BauBau_${i + 1}.mp3`));
 const MococoAudioClips = [...Array(nMococoAudioClips)].map((_, i) => new Audio(`${audioBaseURL}/Mococo_BauBau_${i + 1}.mp3`));
-
-const GetAudio = (source: string) => {
-  switch (source) {
-    case "fuwawa":
-      return FuwawaAudioClips[Math.floor(Math.random() * nFuwawaAudioClips)];
-    case "mococo":
-      return MococoAudioClips[Math.floor(Math.random() * nMococoAudioClips)];
-    default:
-      throw new Error("Unknown source");
-  }
-}
 
 const quotes = [
   "To Bau or not to Bau",
@@ -66,13 +56,32 @@ function App() {
   const [streams, setStreams] = useState<null | Array<Stream>>(null);
 
   // Play Global Baus
-  const [playGlobalBausSetting, setPlayGlobalBausSetting] = useState(false);
   // User must have interacted with the site to play audio at least once for audio to be played in the background
   const [userInteracted, setUserInteracted] = useState(false)
 
   // Constants
   const bauPollingIntervalMillis = 2000;
   const maxGlobalBausPlayedPerSecond = 2;
+
+  const settings = useContext(SettingsContext);
+
+  const GetAudio = useCallback((source: string): HTMLAudioElement => {
+    let audio: HTMLAudioElement;
+    switch (source) {
+      case "fuwawa":
+        audio = FuwawaAudioClips[Math.floor(Math.random() * nFuwawaAudioClips)].cloneNode(true) as HTMLAudioElement;
+        break;
+      case "mococo":
+        audio = MococoAudioClips[Math.floor(Math.random() * nMococoAudioClips)].cloneNode(true) as HTMLAudioElement;
+        break;
+      default:
+        throw new Error("Unknown source");
+    }
+  
+    audio.volume = settings === null ? 1 : settings.masterVolume;
+  
+    return audio
+  }, [settings]);
 
   const UpdateStream = () => {
     axios.get(`${youtubeChannelTrackerUrl}/api/channel/UCt9H_RpQzhxzlyBxFqrdHqA/streams`)
@@ -135,41 +144,36 @@ function App() {
   }, [globalBauCount]);
 
   const playGlobalBaus = useCallback((currentGlobalBauCount: number) => {
+    const minGlobalBauVolume = 0.3;
+    
     if (globalBauCount) {
-      if (playGlobalBausSetting && bauCount && prevBauCount) {
+      if (settings?.playGlobalBaus && bauCount && prevBauCount) {
         const dGlobalBaus = currentGlobalBauCount - globalBauCount;
         const dBaus = bauCount - prevBauCount;
         const dForeignBaus = dGlobalBaus - dBaus;
 
         for (let i = 0; i < dForeignBaus && i < maxGlobalBausPlayedPerSecond * (bauPollingIntervalMillis / 1000); i++) {
-          console.log(i);
+          let audio;
 
-          let audio: null | Node;
-
-          // Clone node so that volume changes doesn't affect the original
           switch (Math.floor(Math.random() * 2)) {
             case 0:
-              audio = GetAudio("mococo").cloneNode(true);
+              audio = GetAudio("mococo");
               break;
             case 1:
-              audio = GetAudio("fuwawa").cloneNode(true);
+              audio = GetAudio("fuwawa");
               break;
             default:
               audio = null;
+              continue;
           }
 
-          if (audio === null) { continue; }
-
-          // Adjust the volume between min and max
-          // ts-ignore because cloned node type is missing audio methods and properties
-          // @ts-ignore
-          audio.volume = 0.3 + 0.4 * Math.random();
-          // @ts-ignore
+          // Adjust the volume to the globalBausVolume * a random value between minGlobalBauVolume and 1
+          audio.volume = settings.globalBausVolume * (minGlobalBauVolume + (1-minGlobalBauVolume) * Math.random());
           setTimeout(() => audio.play(), Math.floor(Math.random() * bauPollingIntervalMillis));
         }
       }
     }
-  }, [playGlobalBausSetting, bauCount, prevBauCount, globalBauCount]);
+  }, [settings?.playGlobalBaus, settings?.globalBausVolume, GetAudio, bauCount, prevBauCount, globalBauCount]);
 
   const parseBauResponse = useCallback((resp: AxiosResponse, hooks: Array<(currentGlobalBauCount: number) => void>) => {
     const currentGlobalBauCount = resp.data['baus'];
@@ -213,11 +217,11 @@ function App() {
 
   // In order to allow the site to play audio, the user must have interacted with the site to play audio first
   useEffect(() => {
-    if (playGlobalBausSetting && !userInteracted) {
+    if (settings?.playGlobalBaus && !userInteracted) {
       setMessage("BAU BAU to confirm tuning in to global baus!");
       setShowMessage(true);
     }
-  }, [playGlobalBausSetting, userInteracted])
+  }, [settings?.playGlobalBaus, userInteracted])
 
   return (
     <div className="App">
@@ -288,9 +292,7 @@ function App() {
 
       {showSettings &&
         <Settings
-          closeSettings={() => setShowSettings(false)}
-          playGlobalBausSetting={playGlobalBausSetting}
-          setPlayGlobalBausSetting={setPlayGlobalBausSetting} />
+          closeSettings={() => setShowSettings(false)} />
       }
       {showAbout && <About closeAbout={() => setShowAbout(false)} />}
 
