@@ -77,9 +77,9 @@ function App() {
       default:
         throw new Error("Unknown source");
     }
-  
+
     audio.volume = settings === null ? 1 : settings.masterVolume;
-  
+
     return audio
   }, [settings]);
 
@@ -145,7 +145,7 @@ function App() {
 
   const playGlobalBaus = useCallback((currentGlobalBauCount: number) => {
     const minGlobalBauVolume = 0.3;
-    
+
     if (globalBauCount) {
       if (settings?.playGlobalBaus && bauCount && prevBauCount) {
         const dGlobalBaus = currentGlobalBauCount - globalBauCount;
@@ -154,7 +154,6 @@ function App() {
 
         for (let i = 0; i < dForeignBaus && i < maxGlobalBausPlayedPerSecond * (bauPollingIntervalMillis / 1000); i++) {
           let audio;
-
           switch (Math.floor(Math.random() * 2)) {
             case 0:
               audio = GetAudio("mococo");
@@ -168,7 +167,7 @@ function App() {
           }
 
           // Adjust the volume to the globalBausVolume * a random value between minGlobalBauVolume and 1
-          audio.volume = settings.globalBausVolume * (minGlobalBauVolume + (1-minGlobalBauVolume) * Math.random());
+          audio.volume = settings.globalBausVolume * (minGlobalBauVolume + (1 - minGlobalBauVolume) * Math.random());
           setTimeout(() => audio.play(), Math.floor(Math.random() * bauPollingIntervalMillis));
         }
       }
@@ -239,11 +238,11 @@ function App() {
           <div
             id='fuwawa'
             onClick={() => {
-              let a = GetAudio("fuwawa");
+              const a = GetAudio("fuwawa");
               a.play().then(
                 () => {
+                  setUserInteracted(true);
                   if (!playFuwawaBau) {
-                    setUserInteracted(true);
                     setPlayFuwawaBau(true);
                     setTimeout(() => { setPlayFuwawaBau(false) }, 1200);
                   }
@@ -261,7 +260,7 @@ function App() {
           <div
             id='mococo'
             onClick={() => {
-              let a = GetAudio("mococo");
+              const a = GetAudio("mococo");
               a.play()
                 .then(() => {
                   setUserInteracted(true);
