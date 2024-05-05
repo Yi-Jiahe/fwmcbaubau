@@ -48,8 +48,11 @@ THEY'RE BACK!`;
 function App() {
   // Bau Counts
   const [globalBauCount, setGlobalBauCount] = useState<undefined | number>();
-  const [bauCount, setBauCount] = useState(0);
-  const [prevBauCount, setPrevBauCount] = useState(0);
+  const [bauCount, setBauCount] = useState(function() {
+    const bauCount = localStorage.getItem("bauCount");
+    return bauCount === null ? 0 : parseInt(bauCount);
+  }());
+  const [prevBauCount, setPrevBauCount] = useState(bauCount);
 
   // Animation
   const [playFuwawaBau, setPlayFuwawaBau] = useState(false);
@@ -76,6 +79,10 @@ function App() {
   const maxGlobalBausPlayedPerSecond = 2;
 
   const settings = useContext(SettingsContext);
+
+  useEffect(() => {
+    localStorage.setItem("bauCount", bauCount.toString());
+  }, [bauCount])
 
   const GetAudio = useCallback((source: string): HTMLAudioElement => {
     let audio: HTMLAudioElement;
@@ -133,7 +140,7 @@ function App() {
     if (globalBauCount === undefined) {
       return;
     }
-
+    
     // Confetti
     switch (milestonePower(globalBauCount, currentGlobalBauCount)) {
       case 6:
