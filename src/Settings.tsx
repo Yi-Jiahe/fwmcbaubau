@@ -28,6 +28,18 @@ function Settings({ closeSettings }: SettingsProps) {
           <span className='tooltip-text'>When enabled, other Ruffians BAU BAUs can also be heard.</span>
         </div>
       </label>
+      <label>
+        <input type='checkbox' checked={settings?.playConfetti}
+          onChange={() => {
+            if (dispatch === null) { return; }
+            dispatch({ type: 'togglePlayConfetti' });
+          }} />
+        <div className='custom-checkbox' />
+        <div className='tooltip'>
+          <span>Play Confetti</span>
+          <span className='tooltip-text'>When enabled, confetti will be triggered when milestones are hit.</span>
+        </div>
+      </label>
 
       <h2>Volume</h2>
       <p>Master</p>

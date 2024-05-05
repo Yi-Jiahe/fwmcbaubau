@@ -28,6 +28,12 @@ function settingsReducer(settings: Settings, action: any): Settings {
         playGlobalBaus: !settings.playGlobalBaus
       }
       break;
+    case 'togglePlayConfetti':
+        newSettings = {
+          ...settings,
+          playConfetti: !settings.playConfetti
+        }
+        break;
     case 'setMasterVolume':
       newSettings = {
         ...settings,
@@ -52,12 +58,14 @@ function settingsReducer(settings: Settings, action: any): Settings {
 
 type Settings = {
   playGlobalBaus: boolean,
+  playConfetti: boolean,
   masterVolume: number,
   globalBausVolume: number,
 }
 
 const initialSettings: Settings = {
   playGlobalBaus: false,
+  playConfetti: true,
   masterVolume: 1,
   globalBausVolume: 0.7,
 }
