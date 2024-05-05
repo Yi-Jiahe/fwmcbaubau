@@ -4,7 +4,10 @@ export const SettingsContext = createContext<null | Settings>(null);
 export const SettingsDispatchContext = createContext<null | React.Dispatch<any>>(null);
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  const [settings, dispatch] = useReducer(settingsReducer, initialSettings);
+  const [settings, dispatch] = useReducer(settingsReducer, function (){
+    const storedSettings = localStorage.getItem("settings");
+    return storedSettings === null ? initialSettings : JSON.parse(storedSettings);
+  }());
 
   return (
     <SettingsContext.Provider value={settings} >
@@ -16,26 +19,35 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 }
 
 function settingsReducer(settings: Settings, action: any): Settings {
+  let newSettings;
+
   switch (action.type) {
     case 'togglePlayGlobalBaus':
-      return {
+      newSettings = {
         ...settings,
         playGlobalBaus: !settings.playGlobalBaus
       }
+      break;
     case 'setMasterVolume':
-      return {
+      newSettings = {
         ...settings,
         masterVolume: action.value
-      }
+      } 
+      break;
     case 'setGlobalBausVolume':
-      return {
+      newSettings = {
         ...settings,
         globalBausVolume: action.value
       }
+      break;
     default: {
       throw Error('Unknown action: ' + action.type);
     }
   }
+
+  localStorage.setItem("settings", JSON.stringify(newSettings));
+
+  return newSettings;
 }
 
 type Settings = {
