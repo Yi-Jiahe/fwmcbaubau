@@ -137,6 +137,10 @@ function App() {
   }, []);
 
   const playConfetti = useCallback((currentGlobalBauCount: number) => {
+    if (settings?.playConfetti === false) {
+      return;
+    }
+
     if (globalBauCount === undefined) {
       return;
     }
@@ -158,7 +162,7 @@ function App() {
         shootSideConfetti();
         break;
     }
-  }, [globalBauCount]);
+  }, [settings?.playConfetti, globalBauCount]);
 
   const playGlobalBaus = useCallback((currentGlobalBauCount: number) => {
     const minGlobalBauVolume = 0.3;
