@@ -218,7 +218,7 @@ function App() {
   // In order to allow the site to play audio, the user must have interacted with the site to play audio first
   useEffect(() => {
     if (settings?.playGlobalBaus && !userInteracted) {
-      setMessage("BAU BAU to confirm tuning in to global baus!");
+      setMessage("BAU BAU to tune in to global baus!");
       setShowMessage(true);
     }
   }, [settings?.playGlobalBaus, userInteracted])
