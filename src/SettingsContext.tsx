@@ -12,8 +12,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setMasterGain(settings.masterVolume);
+  }, [settings.masterVolume]);
+
+  useEffect(() => {
     setGlobalBauVolume(settings.globalBausVolume);
-  }, [])
+  }, [settings.globalBausVolume]);
 
   return (
     <SettingsContext.Provider value={settings} >
@@ -41,14 +44,12 @@ function settingsReducer(settings: Settings, action: any): Settings {
         }
         break;
     case 'setMasterVolume':
-      setMasterGain(action.value);
       newSettings = {
         ...settings,
         masterVolume: action.value
       } 
       break;
     case 'setGlobalBausVolume':
-      setGlobalBauVolume(action.value);
       newSettings = {
         ...settings,
         globalBausVolume: action.value

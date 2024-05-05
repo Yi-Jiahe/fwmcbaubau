@@ -1,7 +1,7 @@
 import './Settings.css';
 import Modal from './Modal';
 import { SettingsContext, SettingsDispatchContext } from './SettingsContext';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 
 type SettingsProps = {
   closeSettings: () => void
