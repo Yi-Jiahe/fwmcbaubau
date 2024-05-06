@@ -32,28 +32,18 @@ function playBau(audio, onPlay) {
   });
   audio.play().then(() => {
     if (onPlay !== undefined) { onPlay(); }
-  }).catch(err => {
-    console.log(err);
-    clip.disconnect();
-    audio.play().then(() => {
-      if (onPlay !== undefined) { onPlay(); }
-    });
   });
 
 }
 
 function playGlobalBau(audio) {
   const clip = audioContext.createMediaElementSource(audio);
-  clip.connect(globalBauGainNode)
+  clip.connect(globalBauGainNode);
   audio.addEventListener("ended", () => {
     clip.disconnect();
-  })
-  audio.play()
-    .catch(err => {
-      console.log(err);
-      clip.disconnect();
-      audio.play();
-    });
+  });
+  audio.play();
+
 }
 
 export {
