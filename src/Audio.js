@@ -25,23 +25,36 @@ function setGlobalBauVolume(gain) {
 }
 
 function playBau(audio, onPlay) {
-  const clip = audioContext.createMediaElementSource(audio);
-  clip.connect(masterGainNode);
-  audio.play().then(() => {
-    if (onPlay !== undefined) { onPlay(); }
-  });
-  audio.addEventListener("ended", () => {
-    clip.disconnect();
-  })
+  try {
+    const clip = audioContext.createMediaElementSource(audio);
+    clip.connect(masterGainNode);
+    audio.addEventListener("ended", () => {
+      clip.disconnect();
+    });
+    audio.play().then(() => {
+      if (onPlay !== undefined) { onPlay(); }
+    });
+  } catch (err) {
+    console.log(err);
+    audio.play().then(() => {
+      if (onPlay !== undefined) { onPlay(); }
+    });
+  }
+
 }
 
 function playGlobalBau(audio) {
-  const clip = audioContext.createMediaElementSource(audio);
-  clip.connect(globalBauGainNode)
-  audio.play();
-  audio.addEventListener("ended", () => {
-    clip.disconnect();
-  })
+  try {
+    const clip = audioContext.createMediaElementSource(audio);
+    clip.connect(globalBauGainNode)
+    audio.addEventListener("ended", () => {
+      clip.disconnect();
+    })
+    audio.play();
+  } catch (err) {
+    console.log(err);
+    audio.play();
+  }
 }
 
 export {
