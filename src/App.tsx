@@ -24,14 +24,14 @@ const nMococoAudioClips = 17;
 const FuwawaAudioClips = [...Array(nFuwawaAudioClips)].map((_, i) => {
   const audio = new Audio();
   audio.crossOrigin = "anonymous";
-  audio.src = `${audioBaseURL}/Fuwawa_BauBau_${i + 1}.mp3`;
+  audio.src = `${audioBaseURL}/Fuwawa_BauBau_${i + 1}.mp3?v=1`;
   return audio;
 }
 );
 const MococoAudioClips = [...Array(nMococoAudioClips)].map((_, i) => {
   const audio = new Audio(`${audioBaseURL}/Mococo_BauBau_${i + 1}.mp3`);
   audio.crossOrigin = "anonymous";
-  audio.src = `${audioBaseURL}/Mococo_BauBau_${i + 1}.mp3`;
+  audio.src = `${audioBaseURL}/Mococo_BauBau_${i + 1}.mp3?v=1`;
   return audio;
 });
 
