@@ -21,7 +21,7 @@ function About({ closeAbout }: AboutProps) {
       <p>Have fun! BAU BAU 🐾</p>
 
       <h2>Credits</h2>
-      <p>FuwaMoco for their lovely voices, and everyone involved in the design of their models and stream assets which this site is based upon.</p>
+      <p>FUWAMOCO for their lovely voices, and everyone involved in the design of their models and stream assets which this site is based upon.</p>
       
       <p>Ruffians for enjoying the site and respecting the rules.</p>
     </Modal>
