@@ -14,9 +14,9 @@ import Settings from './Settings';
 import { SettingsContext } from './SettingsContext';
 import { enableAudioContext, playBau, playGlobalBau } from './Audio';
 
-const base_url = "https://bau.amesame.rocks";
+const base_url = "https://fwmcbaubau.jiahe.dev";
 const audioBaseURL = "https://d3beqw4zdoa6er.cloudfront.net";
-const youtubeChannelTrackerUrl = "https://youtube-channel-tracker.amesame.rocks";
+const youtubeChannelTrackerUrl = "https://fwmcbaubau.jiahe.dev";
 
 const nFuwawaAudioClips = 17;
 const nMococoAudioClips = 17;
